@@ -1,0 +1,16 @@
+body {
+  /* Offset the container below the topbar */
+
+  padding-top: 60px;
+}
+.navbar {
+  width: 440px;
+}
+.container {
+  width: 400px !important;
+  margin-left: 20px;
+}
+.player .increment:hover,
+.player .remove:hover {
+  cursor: pointer;
+}
