@@ -3,14 +3,20 @@ Items = new Meteor.Collection 'items'
 reset_data = -> # Executes on both client and server.
   Items.remove {}
   items = [ 'Item 1',
+            'Item 1.1',
+            'Item 1.1.1',
             'Item 2',
-            'Item 3'
+            'Item 2.1',
+            'Item 2.1.1'
           ]
-  for item in items
+  indent = 0
+  for item, i in items
     Items.insert
       item: item
+      indent: i % 3
       value: Math.floor(Math.random() * 10) * 5
-
+  Session.set 'sort_by_item', true
+  
 if Meteor.is_client
 
   _.extend Template.navbar,
@@ -21,7 +27,7 @@ if Meteor.is_client
 
   _.extend Template.socialist,
     items: ->
-      sort = if Session.get('sort_by_item') then item: 1 else value: -1
+      sort = unless Session.get('sort_by_item') then value: -1 else item: 1
       Items.find {}, sort: sort
 
     events:

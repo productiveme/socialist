@@ -1,3 +1,5 @@
+@indentLevels: 12;
+
 body {
   /* Offset the container below the topbar */
   padding-top: 60px;
@@ -19,3 +21,14 @@ body {
     }
   }
 }
+
+.indentX (@index) when (@index > -1) {
+  (~".indent@{index}") {
+    margin-left: (2em*@index);
+  }
+
+  .indentX(@index - 1);
+}
+.indentX (-1) {}
+
+.indentX (@indentLevels);

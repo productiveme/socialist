@@ -5,18 +5,19 @@
   Items = new Meteor.Collection('items');
 
   reset_data = function() {
-    var item, items, _i, _len, _results;
+    var i, indent, item, items, _i, _len;
     Items.remove({});
-    items = ['Item 1', 'Item 2', 'Item 3'];
-    _results = [];
-    for (_i = 0, _len = items.length; _i < _len; _i++) {
-      item = items[_i];
-      _results.push(Items.insert({
+    items = ['Item 1', 'Item 1.1', 'Item 1.1.1', 'Item 2', 'Item 2.1', 'Item 2.1.1'];
+    indent = 0;
+    for (i = _i = 0, _len = items.length; _i < _len; i = ++_i) {
+      item = items[i];
+      Items.insert({
         item: item,
+        indent: i % 3,
         value: Math.floor(Math.random() * 10) * 5
-      }));
+      });
     }
-    return _results;
+    return Session.set('sort_by_item', true);
   };
 
   if (Meteor.is_client) {
@@ -36,10 +37,10 @@
     _.extend(Template.socialist, {
       items: function() {
         var sort;
-        sort = Session.get('sort_by_item') ? {
-          item: 1
-        } : {
+        sort = !Session.get('sort_by_item') ? {
           value: -1
+        } : {
+          item: 1
         };
         return Items.find({}, {
           sort: sort

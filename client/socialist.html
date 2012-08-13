@@ -4,7 +4,7 @@
 </head>
 
 <body>
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top span12">
     <div class="navbar-inner">
       <div class="container">
         {{> navbar}}
@@ -55,7 +55,7 @@
 
 <template name="item">
   <tr class="item">
-    <td class="item">{{item}}</td>
+    <td class="item"><div class="indent{{indent}}">{{item}}</div></td>
     <td class="value">{{value}}</td>
     <td><i class="increment icon-plus" rel="tooltip" data-original-title="Add five points to the value"></i></td>
     <td><i class="remove icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
