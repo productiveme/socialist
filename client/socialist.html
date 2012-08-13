@@ -1,0 +1,64 @@
+<head>
+  <title>Socialist</title>
+  <link rel="shortcut icon" href="/img/favicon.ico">
+</head>
+
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        {{> navbar}}
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    {{> socialist}}
+  </div>
+</body>
+
+<template name="navbar">
+        <a class="brand" href="#">Socialist</a>
+        <ul class="nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a class="sort_by_item" href="#">Sort by Item</a></li>
+              <li><a class="sort_by_value" href="#">Sort by Value</a></li>
+              <li class="divider"></li>
+              <li class="reset_data"><a href="#">Reset Data</a></li>
+            </ul>
+          </li>
+        </ul>
+</template>
+
+<template name="socialist">
+  <div class="input-append">
+    <input id="item" type="text" placeholder="New item"/>
+    <button id="add_button" class="btn" type="button">Add Item</button>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Value</th>
+        <th style="width: 20px"></th>
+        <th style="width: 20px"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#each items}}
+      {{> item}}
+    {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="item">
+  <tr class="item">
+    <td class="item">{{item}}</td>
+    <td class="value">{{value}}</td>
+    <td><i class="increment icon-plus" rel="tooltip" data-original-title="Add five points to the value"></i></td>
+    <td><i class="remove icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
+  </tr>
+  {{enable_tooltips}}
+</template>
