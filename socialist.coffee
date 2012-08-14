@@ -5,15 +5,19 @@ reset_data = -> # Executes on both client and server.
   items = [ 'Item 1',
             'Item 1.1',
             'Item 1.1.1',
+            'Item 1.1.2',
+            'Item 1.1.2.1'
             'Item 2',
             'Item 2.1',
-            'Item 2.1.1'
+            'Item 2.1.1',
+            'Item 2.2',
+            'Item 3'
           ]
   indent = 0
   for item, i in items
     Items.insert
       item: item
-      indent: i % 3
+      indent: item.length - item.replace(/\./g, '').length,
       value: Math.floor(Math.random() * 10) * 5
   Session.set 'sort_by_item', true
   

@@ -7,13 +7,13 @@
   reset_data = function() {
     var i, indent, item, items, _i, _len;
     Items.remove({});
-    items = ['Item 1', 'Item 1.1', 'Item 1.1.1', 'Item 2', 'Item 2.1', 'Item 2.1.1'];
+    items = ['Item 1', 'Item 1.1', 'Item 1.1.1', 'Item 1.1.2', 'Item 1.1.2.1', 'Item 2', 'Item 2.1', 'Item 2.1.1', 'Item 2.2', 'Item 3'];
     indent = 0;
     for (i = _i = 0, _len = items.length; _i < _len; i = ++_i) {
       item = items[i];
       Items.insert({
         item: item,
-        indent: i % 3,
+        indent: item.length - item.replace(/\./g, '').length,
         value: Math.floor(Math.random() * 10) * 5
       });
     }

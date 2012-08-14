@@ -24,7 +24,7 @@ body {
 
 .indentX (@index) when (@index > -1) {
   (~".indent@{index}") {
-    margin-left: (2em*@index);
+    margin-left: (1em*@index);
   }
 
   .indentX(@index - 1);
