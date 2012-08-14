@@ -1,5 +1,9 @@
 # Socialist - sharing a generic list with friends
 
+Deployed as a [demo][1] to [socialist.meteor.com][1]
+
+[1]: http://socialist.meteor.com
+
 A fork of the [leaderboard-coffeescript](https://github.com/srackham/leaderboard-coffeescript) project which is a port of [Meteor](http://meteor.com/) framework's [Leaderboard example](http://meteor.com/examples/leaderboard) rewritten using [CoffeeScript](http://coffeescript.org/), [Less](http://lesscss.org/) and Twitter [Bootstrap](http://twitter.github.com/bootstrap/).
 
 ## Installation

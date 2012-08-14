@@ -31,7 +31,7 @@ if Meteor.is_client
 
   _.extend Template.socialist,
     items: ->
-      sort = unless Session.get('sort_by_item') then value: -1 else item: 1
+      sort = if Session.get('sort_by_item') is false then value: -1 else item: 1
       Items.find {}, sort: sort
 
     events:

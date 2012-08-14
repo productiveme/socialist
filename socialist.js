@@ -37,7 +37,7 @@
     _.extend(Template.socialist, {
       items: function() {
         var sort;
-        sort = !Session.get('sort_by_item') ? {
+        sort = Session.get('sort_by_item') === false ? {
           value: -1
         } : {
           item: 1

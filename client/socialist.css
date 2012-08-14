@@ -3,13 +3,22 @@ body {
 
   padding-top: 60px;
 }
+.brand > img {
+  height: 1.5em;
+  margin-top: -10px;
+  margin-right: 0.2em;
+  margin-bottom: -0.4em;
+}
+/*
 .navbar {
   width: 440px;
 }
+
 .container {
   width: 400px !important;
   margin-left: 20px;
 }
+*/
 .item .increment:hover,
 .item .remove:hover {
   cursor: pointer;
