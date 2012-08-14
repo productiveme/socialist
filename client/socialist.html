@@ -50,31 +50,22 @@
 </body>
 
 <template name="navbar">
-        <a class="brand" href="#">Socialist</a>
-        <ul class="nav">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a class="sort_by_item" href="#">Sort by Item</a></li>
-              <li><a class="sort_by_value" href="#">Sort by Value</a></li>
-              <li class="divider"></li>
-              <li class="reset_data"><a href="#">Reset Data</a></li>
-            </ul>
-          </li>
-        </ul>
+  <a class="brand" href="#">Socialist</a>
+  <ul class="nav">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li class="reset_data"><a href="#">Reset Data</a></li>
+      </ul>
+    </li>
+  </ul>
 </template>
 
 <template name="socialist">
-  <div class="input-append">
-    <input id="item" type="text" placeholder="New item"/>
-    <button id="add_button" class="btn" type="button">Add Item</button>
-  </div>
   <table class="table table-striped">
     <thead>
       <tr>
         <th>Item</th>
-        <th>Value</th>
-        <th style="width: 20px"></th>
         <th style="width: 20px"></th>
       </tr>
     </thead>
@@ -87,11 +78,15 @@
 </template>
 
 <template name="item">
-  <tr class="item">
-    <td class="item"><div class="indent{{indent}}">{{item}}</div></td>
-    <td class="value">{{value}}</td>
-    <td><i class="increment icon-plus" rel="tooltip" data-original-title="Add five points to the value"></i></td>
-    <td><i class="remove icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
-  </tr>
-  {{enable_tooltips}}
+  {{#if isEditing}}
+    <tr class="item">
+      <td class="item itemEditing"><div class="indent{{indent}}" style="position:relative;"><input type="text" style="width:100%" class="input-large itemEditingInput item_{{_id}}" value="{{item}}" /><i class="done icon-ok" rel="tooltip" data-original-title="Done editing" style=" margin-top:0.5em;position: absolute;right: -0.3em;top: 0;"></i></div></td>
+      <td nowrap="nowrap"><i class="outdent icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="indent icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i></td>
+    </tr>
+  {{else}}
+    <tr class="item">
+      <td class="item itemView"><div class="indent{{indent}}">{{item}}</div></td>
+      <td><i class="remove icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
+    </tr>
+  {{/if}}
 </template>

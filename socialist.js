@@ -5,85 +5,69 @@
   Items = new Meteor.Collection('items');
 
   reset_data = function() {
-    var i, indent, item, items, _i, _len;
+    var curItem;
     Items.remove({});
-    items = ['Item 1', 'Item 1.1', 'Item 1.1.1', 'Item 1.1.2', 'Item 1.1.2.1', 'Item 2', 'Item 2.1', 'Item 2.1.1', 'Item 2.2', 'Item 3'];
-    indent = 0;
-    for (i = _i = 0, _len = items.length; _i < _len; i = ++_i) {
-      item = items[i];
-      Items.insert({
-        item: item,
-        indent: item.length - item.replace(/\./g, '').length,
-        value: Math.floor(Math.random() * 10) * 5
-      });
-    }
-    return Session.set('sort_by_item', true);
+    curItem = Items.insert({
+      item: 'First Item',
+      indent: 0,
+      isEditing: false
+    });
+    curItem = Items.insert({
+      item: 'Second Item',
+      indent: 0,
+      isEditing: false
+    });
   };
 
   if (Meteor.is_client) {
+    _.extend(Template.socialist, {
+      items: function() {
+        return Items.find({});
+      }
+    });
     _.extend(Template.navbar, {
       events: {
-        'click .sort_by_item': function() {
-          return Session.set('sort_by_item', true);
-        },
-        'click .sort_by_value': function() {
-          return Session.set('sort_by_item', false);
-        },
         'click .reset_data': function() {
           return reset_data();
         }
       }
     });
-    _.extend(Template.socialist, {
-      items: function() {
-        var sort;
-        sort = Session.get('sort_by_item') === false ? {
-          value: -1
-        } : {
-          item: 1
-        };
-        return Items.find({}, {
-          sort: sort
-        });
-      },
-      events: {
-        'click #add_button, keyup #item': function(evt) {
-          var input;
-          if (evt.type === 'keyup' && evt.which !== 13) {
-            return;
-          }
-          input = $('#item');
-          if (input.val()) {
-            Items.insert({
-              item: input.val(),
-              value: Math.floor(Math.random() * 10) * 5
-            });
-            return input.val('');
-          }
-        }
-      }
-    });
     _.extend(Template.item, {
       events: {
-        'click .increment': function() {
-          return Items.update(this._id, {
-            $inc: {
-              value: 5
-            }
-          });
-        },
         'click .remove': function() {
           return Items.remove(this._id);
         },
-        'click': function() {
-          return $('.tooltip').remove();
+        'click .itemView': function() {
+          return Items.update(this._id, {
+            isEditing: true,
+            item: this.item,
+            indent: this.indent
+          });
+        },
+        'click .outdent': function() {
+          return Items.update(this._id, {
+            $inc: {
+              indent: -1
+            }
+          });
+        },
+        'click .indent': function() {
+          return Items.update(this._id, {
+            $inc: {
+              indent: 1
+            }
+          });
+        },
+        'click .done, keyup .itemEditingInput': function(evt) {
+          if (evt.type === 'keyup' && evt.which !== 13) {
+            return;
+          }
+          return Items.update(this._id, {
+            isEditing: false,
+            item: $('.item_' + this._id).val(),
+            indent: this.indent
+          });
         }
-      },
-      enable_tooltips: function() {
-        _.defer(function() {
-          return $('[rel=tooltip]').tooltip();
-        });
-        return '';
       }
     });
   }
