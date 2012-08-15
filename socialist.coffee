@@ -13,6 +13,16 @@ reset_data = -> # Executes on both client and server.
   return
 
 if Meteor.is_client
+
+  setIndent = (el, indent) ->
+    el.removeClass()
+    el.addClass('indent'+indent)
+
+  cancelEvent = (e) ->
+    e.stopPropogation if e? and e.stopPropogation?
+    window.event.cancelBubble = true if window.event? and window.event.cancelBubble?
+    e.preventDefault if e? and e.preventDefault?
+
   _.extend Template.socialist,
     items: ->
       Items.find {}
@@ -28,14 +38,51 @@ if Meteor.is_client
         isEditing: true
         item: @item
         indent: @indent
-      'click .outdent': -> Items.update @_id, $inc: {indent: -1}
-      'click .indent': -> Items.update @_id, $inc: {indent: 1}
+      'click .outdent, keydown .itemEditingInput': (evt) -> 
+        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not shift-tab
+        cancelEvent(evt)
+        Items.update @_id, $inc: {indent: -1}
+        $('.item_'+@_id).focus()
+        return false
+      'click .indent, keydown .itemEditingInput': (evt) -> 
+        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab.
+        cancelEvent(evt)
+        Items.update @_id, $inc: {indent: 1}
+        $('.item_'+@_id).focus()
+        return false
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.update @_id, 
           isEditing: false
           item: $('.item_'+@_id).val()
           indent: @indent
+
+  _.extend Template.itemNew, 
+    newItem: 
+      item: ''
+      indent: 0
+    events:
+      'click .outdent, keydown .itemEditingInput': (evt) -> 
+        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not shift-tab
+        cancelEvent(evt)
+        @indent--
+        setIndent $('.item_new').parent(), @indent
+        $('.item_new').focus()
+        return false
+      'click .indent, keydown .itemEditingInput': (evt) -> 
+        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab
+        cancelEvent(evt)
+        @indent++
+        setIndent $('.item_new').parent(), @indent
+        $('.item_new').focus()
+        return false
+      'click .done, keyup .itemEditingInput': (evt) -> 
+        return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
+        Items.insert
+          isEditing: false
+          item: $('.item_new').val()
+          indent: @indent
+        $('.item_new').val('')
 
 if Meteor.is_server
   Meteor.startup -> 

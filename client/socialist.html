@@ -73,8 +73,18 @@
     {{#each items}}
       {{> item}}
     {{/each}}
+    {{> itemNew}}
     </tbody>
   </table>
+</template>
+
+<template name="itemNew">
+  {{#with newItem}}
+  <tr class="item">
+      <td class="item itemEditing"><div class="indent0" style="position:relative;"><input type="text" style="width:100%" class="input-large itemEditingInput item_new" value="{{item}}" /><i class="done icon-ok" rel="tooltip" data-original-title="Done editing" style=" margin-top:0.5em;position: absolute;right: -0.3em;top: 0;"></i></div></td>
+      <td nowrap="nowrap"><i class="outdent icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="indent icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i></td>
+    </tr>
+  {{/with}}
 </template>
 
 <template name="item">
