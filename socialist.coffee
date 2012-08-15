@@ -23,19 +23,18 @@ if Meteor.is_client
     el.removeClass()
     el.addClass('indent'+indent)
 
-  changeIndent = (evt, el, fn, fnKey) ->
+  changeIndent = (evt, fn, fnKey) ->
     if evt.type is 'keydown' and fnKey?()
     then return
     else cancelEvent(evt)
     fn?()
-    el?.focus?()
     return false
 
-  outdent = (evt, el, fn) ->
-    changeIndent evt, el, fn, -> not(evt.which is 9 and evt.shiftKey)
+  outdent = (evt, fn) ->
+    changeIndent evt, fn, -> not(evt.which is 9 and evt.shiftKey)
 
-  indent = (evt, el, fn) ->
-    changeIndent evt, el, fn, -> evt.which isnt 9 
+  indent = (evt, fn) ->
+    changeIndent evt, fn, -> evt.which isnt 9 
 
   _.extend Template.socialist,
     items: ->
@@ -53,9 +52,13 @@ if Meteor.is_client
         item: @item
         indent: @indent
       'click .outdent, keydown .itemEditingInput': (evt) -> 
-        outdent evt, $('.item_'+@_id), => Items.update @_id, $inc: {indent: -1}
+        outdent evt, => 
+          Items.update @_id, $inc: {indent: -1}
+          Meteor.defer => $('.item_'+@_id).focus()
       'click .indent, keydown .itemEditingInput': (evt) -> 
-        indent evt, $('.item_'+@_id), => Items.update @_id, $inc: {indent: 1}
+        indent evt, => 
+          Items.update @_id, $inc: {indent: 1}
+          Meteor.defer => $('.item_'+@_id).focus()
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.update @_id, 
@@ -69,13 +72,15 @@ if Meteor.is_client
       indent: 0
     events:
       'click .outdent, keydown .itemEditingInput': (evt) -> 
-        outdent evt, $('.item_new'), => 
+        outdent evt, => 
           @indent--
           setIndentClass $('.item_new').parent(), @indent
+          $('.item_new').focus()
       'click .indent, keydown .itemEditingInput': (evt) -> 
-        indent evt, $('.item_new'), =>
+        indent evt, =>
           @indent++
           setIndentClass $('.item_new').parent(), @indent
+          $('.item_new').focus()
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.insert

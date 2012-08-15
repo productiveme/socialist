@@ -35,7 +35,7 @@
       el.removeClass();
       return el.addClass('indent' + indent);
     };
-    changeIndent = function(evt, el, fn, fnKey) {
+    changeIndent = function(evt, fn, fnKey) {
       if (evt.type === 'keydown' && (typeof fnKey === "function" ? fnKey() : void 0)) {
         return;
       } else {
@@ -44,20 +44,15 @@
       if (typeof fn === "function") {
         fn();
       }
-      if (el != null) {
-        if (typeof el.focus === "function") {
-          el.focus();
-        }
-      }
       return false;
     };
-    outdent = function(evt, el, fn) {
-      return changeIndent(evt, el, fn, function() {
+    outdent = function(evt, fn) {
+      return changeIndent(evt, fn, function() {
         return !(evt.which === 9 && evt.shiftKey);
       });
     };
-    indent = function(evt, el, fn) {
-      return changeIndent(evt, el, fn, function() {
+    indent = function(evt, fn) {
+      return changeIndent(evt, fn, function() {
         return evt.which !== 9;
       });
     };
@@ -87,21 +82,27 @@
         },
         'click .outdent, keydown .itemEditingInput': function(evt) {
           var _this = this;
-          return outdent(evt, $('.item_' + this._id), function() {
-            return Items.update(_this._id, {
+          return outdent(evt, function() {
+            Items.update(_this._id, {
               $inc: {
                 indent: -1
               }
+            });
+            return Meteor.defer(function() {
+              return $('.item_' + _this._id).focus();
             });
           });
         },
         'click .indent, keydown .itemEditingInput': function(evt) {
           var _this = this;
-          return indent(evt, $('.item_' + this._id), function() {
-            return Items.update(_this._id, {
+          return indent(evt, function() {
+            Items.update(_this._id, {
               $inc: {
                 indent: 1
               }
+            });
+            return Meteor.defer(function() {
+              return $('.item_' + _this._id).focus();
             });
           });
         },
@@ -125,16 +126,18 @@
       events: {
         'click .outdent, keydown .itemEditingInput': function(evt) {
           var _this = this;
-          return outdent(evt, $('.item_new'), function() {
+          return outdent(evt, function() {
             _this.indent--;
-            return setIndentClass($('.item_new').parent(), _this.indent);
+            setIndentClass($('.item_new').parent(), _this.indent);
+            return $('.item_new').focus();
           });
         },
         'click .indent, keydown .itemEditingInput': function(evt) {
           var _this = this;
-          return indent(evt, $('.item_new'), function() {
+          return indent(evt, function() {
             _this.indent++;
-            return setIndentClass($('.item_new').parent(), _this.indent);
+            setIndentClass($('.item_new').parent(), _this.indent);
+            return $('.item_new').focus();
           });
         },
         'click .done, keyup .itemEditingInput': function(evt) {
