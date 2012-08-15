@@ -14,14 +14,28 @@ reset_data = -> # Executes on both client and server.
 
 if Meteor.is_client
 
-  setIndent = (el, indent) ->
-    el.removeClass()
-    el.addClass('indent'+indent)
-
   cancelEvent = (e) ->
     e.stopPropogation if e? and e.stopPropogation?
     window.event.cancelBubble = true if window.event? and window.event.cancelBubble?
     e.preventDefault if e? and e.preventDefault?
+
+  setIndentClass = (el, indent) ->
+    el.removeClass()
+    el.addClass('indent'+indent)
+
+  changeIndent = (evt, el, fn, fnKey) ->
+    if evt.type is 'keydown' and fnKey?()
+    then return
+    else cancelEvent(evt)
+    fn?()
+    el?.focus?()
+    return false
+
+  outdent = (evt, el, fn) ->
+    changeIndent evt, el, fn, -> not(evt.which is 9 and evt.shiftKey)
+
+  indent = (evt, el, fn) ->
+    changeIndent evt, el, fn, -> evt.which isnt 9 
 
   _.extend Template.socialist,
     items: ->
@@ -39,17 +53,9 @@ if Meteor.is_client
         item: @item
         indent: @indent
       'click .outdent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not shift-tab
-        cancelEvent(evt)
-        Items.update @_id, $inc: {indent: -1}
-        $('.item_'+@_id).focus()
-        return false
+        outdent evt, $('.item_'+@_id), => Items.update @_id, $inc: {indent: -1}
       'click .indent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab.
-        cancelEvent(evt)
-        Items.update @_id, $inc: {indent: 1}
-        $('.item_'+@_id).focus()
-        return false
+        indent evt, $('.item_'+@_id), => Items.update @_id, $inc: {indent: 1}
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.update @_id, 
@@ -63,19 +69,13 @@ if Meteor.is_client
       indent: 0
     events:
       'click .outdent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not shift-tab
-        cancelEvent(evt)
-        @indent--
-        setIndent $('.item_new').parent(), @indent
-        $('.item_new').focus()
-        return false
+        outdent evt, $('.item_new'), => 
+          @indent--
+          setIndentClass $('.item_new').parent(), @indent
       'click .indent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab
-        cancelEvent(evt)
-        @indent++
-        setIndent $('.item_new').parent(), @indent
-        $('.item_new').focus()
-        return false
+        indent evt, $('.item_new'), =>
+          @indent++
+          setIndentClass $('.item_new').parent(), @indent
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.insert
