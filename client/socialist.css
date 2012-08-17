@@ -1,8 +1,10 @@
+/* Offset the container below the topbar
 body {
-  /* Offset the container below the topbar */
+   
 
   padding-top: 60px;
 }
+*/
 .brand > img {
   height: 1.5em;
   margin-top: -10px;

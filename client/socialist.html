@@ -1,130 +1,78 @@
 <head>
-		<meta charset="utf-8">
-		<title>Socialist</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
-		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta charset="utf-8">
+  <title>Socialist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-		<!-- Le styles -->
-		<style>
-			body {
-				padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-			}
-			
-			.brand > img {
-				height: 1.5em;
-				margin-top: -10px;
-				margin-right: 0.2em;
-				margin-bottom: -0.4em;
-			}
-		</style>
-		
+  <!-- Le styles -->
+  <style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  }
 
-		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
+  .brand > img {
+    height: 1.5em;
+    margin-top: -10px;
+    margin-right: 0.2em;
+    margin-bottom: -0.4em;
+  }
+  </style>
 
-		<!-- Le fav and touch icons -->
-		<link rel="shortcut icon" href="/img/favicon.ico">
-		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/apple-touch-icon-114-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/apple-touch-icon-72-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" href="/img/apple-touch-icon-57-precomposed.png">
-	</head>
+
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le fav and touch icons -->
+	<link rel="shortcut icon" href="/img/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="/img/apple-touch-icon-57-precomposed.png">
+</head>
 
 <body>
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-        {{> navbar}}
+        <a class="brand" href="#">Socialist</a>
+        <ul class="nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li class="reset_data" data-bind="click: resetData"><a href="#">Reset Data</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
   <div class="container">
-    {{> socialist}}
+    <table class="table table-striped">
+      <thead>
+        <tr><th>Item</th><th style="width:3em;"></th></tr>
+      </thead>
+      <tbody data-bind="foreach: items">
+        <tr data-bind="template: modeTemplate()">
+        </tr>
+      </tbody>
+    </table>
   </div>
+
+<script type="text/html" id="item">
+  <td data-bind="text: item, click: setEditing"></td>
+  <td><i class="icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
+</script>
+<script type="text/html" id="itemEditing">
+  <td style="position:relative"><input type="text" class="input-large" style="width:100%" data-bind="value: item" /><i data-bind="click: clearEditing" class="done icon-ok" rel="tooltip" data-original-title="Done editing" style="margin-top:0.5em;position: absolute;right: 0.4em;top: 0.5em;"></i></td>
+  <td><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i></td>
+</script>
+
 </body>
 
-<template name="navbar">
-  <a class="brand" href="#">Socialist</a>
-  <ul class="nav">
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        <li class="reset_data"><a href="#">Reset Data</a></li>
-      </ul>
-    </li>
-  </ul>
-</template>
 
-<template name="socialist">
-  <div class="row-fluid">
-    <div class="span12"><strong>Item</strong></div>
-  </div>
-  <!--table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th style="width: 20px"></th>
-      </tr>
-    </thead>
-    <tbody-->
-    {{#each items}}
-      {{> item}}
-    {{/each}}
-    {{> itemNew}}
-    <!--/tbody>
-  </table-->
-</template>
-
-<template name="itemNew">
-  {{#with newItem}}
-  <div class="row-fluid item">
-    <div class="item itemEditing span11">
-      <div class="indent0" style="position:relative;"><input type="text" style="width:100%" class="input-large itemEditingInput item_new" value="{{item}}" /><i class="done icon-ok" rel="tooltip" data-original-title="Done editing" style=" margin-top:0.5em;position: absolute;right: -0.3em;top: 0;"></i></div>
-    </div>
-    <div class="span1"><i class="outdent icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="indent icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i>
-    </div>
-  </div>
-  
-  <!--tr class="item">
-      <td class="item itemEditing"></td>
-      <td nowrap="nowrap"></td>
-    </tr-->
-  {{/with}}
-</template>
-
-<template name="item">
-  {{#if isEditing}}
-    <div class="row-fluid item">
-      <div class="span11 item itemEditing">
-        <div class="indent{{indent}}" style="position:relative;"><input type="text" style="width:100%" class="input-large itemEditingInput item_{{_id}}" value="{{item}}" /><i class="done icon-ok" rel="tooltip" data-original-title="Done editing" style=" margin-top:0.5em;position: absolute;right: -0.3em;top: 0;"></i></div>
-      </div>
-      <div class="span1">
-        <i class="outdent icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="indent icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i>
-      </div>
-    </div>
-
-    <!--tr class="item">
-      <td class="item itemEditing"></td>
-      <td nowrap="nowrap"><</td>
-    </tr-->
-  {{else}}
-    <div class="row-fluid item">
-      <div class="span11 item itemView">
-        <div class="indent{{indent}}">{{item}}</div>
-      </div>
-      <div class="span1">
-        <i class="remove icon-remove" rel="tooltip" data-original-title="Delete item"></i>
-      </div>
-    </div>
-    <!--tr class="item">
-      <td class="item itemView"></td>
-      <td></td>
-    </tr-->
-  {{/if}}
-</template>
