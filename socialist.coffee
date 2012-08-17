@@ -14,11 +14,6 @@ reset_data = -> # Executes on both client and server.
 
 if Meteor.is_client
 
-  cancelEvent = (e) ->
-    e.stopPropogation if e? and e.stopPropogation?
-    window.event.cancelBubble = true if window.event? and window.event.cancelBubble?
-    e.preventDefault if e? and e.preventDefault?
-
   setIndentClass = (el, indent) ->
     el.removeClass()
     el.addClass('indent'+indent)
@@ -30,7 +25,7 @@ if Meteor.is_client
   _.extend Template.navbar,
     events:
       'click .reset_data': -> reset_data()
-
+      
   _.extend Template.item,
     events:
       'click .remove': -> Items.remove @_id
@@ -38,18 +33,30 @@ if Meteor.is_client
         isEditing: true
         item: @item
         indent: @indent
-      'click .outdent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not Shift-Tab
-        cancelEvent(evt) if evt.type is 'keydown'
+      'click .outdent': ->
         Items.update @_id, $inc: {indent: -1}
         Meteor.defer => $('.item_'+@_id).focus()
-        return false
-      'click .indent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab
-        cancelEvent(evt) if evt.type is 'keydown'
+      'keydown .itemEditingInput': (evt) -> 
+        return unless evt.which is 8 and $('.item_'+@_id).val() is '' # backspace when empty
+        return if @indent is 0
+        Items.update @_id, 
+          $set:
+            item: $('.item_'+@_id).val()
+          $inc: 
+            indent: -1
+        Meteor.defer => $('.item_'+@_id).focus()
+      'click .indent': ->
         Items.update @_id, $inc: {indent: 1}
         Meteor.defer => $('.item_'+@_id).focus()
-        return false
+      'keyup .itemEditingInput': (evt) -> 
+        return unless evt.which is 32 and $('.item_'+@_id).val().substr(0,2) is '  ' # starts with 2 spaces
+        $('.item_'+@_id).val $('.item_'+@_id).val().substring(2)
+        Items.update @_id, 
+          $set: 
+            item: $('.item_'+@_id).val()
+          $inc: 
+            indent: 1
+        Meteor.defer => $('.item_'+@_id).focus()
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.update @_id, 
@@ -62,20 +69,27 @@ if Meteor.is_client
       item: ''
       indent: 0
     events:
-      'click .outdent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and not(evt.which is 9 and evt.shiftKey) # Key is not Shift-Tab
-        cancelEvent(evt) if evt.type is 'keydown'
+      'click .outdent': ->
+        return if @indent is 0
         @indent--
         setIndentClass $('.item_new').parent(), @indent
         $('.item_new').focus()
-        return false
-      'click .indent, keydown .itemEditingInput': (evt) -> 
-        return if evt.type is 'keydown' and evt.which isnt 9 # Key is not Tab
-        cancelEvent(evt) if evt.type is 'keydown'
+      'keydown .itemEditingInput': (evt) -> 
+        return unless evt.which is 8 and $('.item_new').val() is '' # backspace when empty
+        return if @indent is 0
+        @indent--
+        setIndentClass $('.item_new').parent(), @indent
+        $('.item_new').focus()
+      'click .indent': (evt) -> 
         @indent++
         setIndentClass $('.item_new').parent(), @indent
         $('.item_new').focus()
-        return false
+      'keyup .itemEditingInput': (evt) ->
+        return unless evt.which is 32 and $('.item_new').val().substr(0,2) is '  ' # starts with 2 spaces
+        @indent++
+        setIndentClass $('.item_new').parent(), @indent
+        $('.item_new').val $('.item_new').val().substring(2)
+        $('.item_new').focus()
       'click .done, keyup .itemEditingInput': (evt) -> 
         return if evt.type is 'keyup' and evt.which isnt 13 # Key is not Enter.
         Items.insert
