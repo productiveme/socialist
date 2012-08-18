@@ -80,6 +80,15 @@
               });
             }
           };
+          parent.restore = function() {
+            if (parent.archived()) {
+              return Items.update(parent._id(), {
+                $set: {
+                  archived: false
+                }
+              });
+            }
+          };
           return observable;
         }
       }

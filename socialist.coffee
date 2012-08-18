@@ -51,6 +51,10 @@ if Meteor.is_client
           else
             Items.update parent._id(), 
               $set: archived: true
+        parent.restore = ->
+          if parent.archived()
+            Items.update parent._id(),
+              $set: archived: false
 
         return observable
 
