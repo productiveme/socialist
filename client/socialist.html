@@ -57,6 +57,12 @@
         <tr data-bind="template: modeTemplate()"> 
         </tr>
       </tbody>
+      <tfoot>
+        <tr data-bind="with: itemToInsert">
+          <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing"></i></div></td>
+          <td class="icons"><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" data-bind="click: doIndent"></i></td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 

@@ -34,8 +34,24 @@ if Meteor.is_client
 
         return observable
 
+  blankItem = ->
+    @item = ko.observable('')
+    @indent = ko.observable(0)
+    @save = =>
+      Items.insert
+        item: @item()
+        indent: @indent()
+      @item('')
+    @doIndent = =>
+      @indent(@indent() + 1)
+    @doOutdent = =>
+      @indent(@indent() - 1)
+    return
+
+
   viewModel = ->
     items = ko.meteor.find(Items, {}, {}, itemMapping)
+    itemToInsert = new blankItem()
     resetData = -> reset_data()
     indentOn2LeadingSpaces = (model,event) ->
       return unless event.which is 32
@@ -58,6 +74,7 @@ if Meteor.is_client
     return {
       resetData: resetData
       items: items
+      itemToInsert: itemToInsert
       # indentOn2LeadingSpaces: indentOn2LeadingSpaces
       # outdentOnBackspaceAndEmpty: outdentOnBackspaceAndEmpty
       checkIndentationKeyBindings: checkIndentationKeyBindings
