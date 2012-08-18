@@ -14,6 +14,18 @@
       item: 'Second Item',
       indent: 0
     });
+    Items.insert({
+      item: '1st Child of 2nd Item (shortcut: start with 2 or 3 spaces)',
+      indent: 1
+    });
+    Items.insert({
+      item: 'Grandchild of 2nd Item',
+      indent: 2
+    });
+    Items.insert({
+      item: '2nd Child of 2nd Item (shortcut: backspace when empty)',
+      indent: 1
+    });
   };
 
   if (Meteor.is_client) {
