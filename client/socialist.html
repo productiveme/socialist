@@ -51,7 +51,7 @@
   <div class="container">
     <table class="table table-striped">
       <thead>
-        <tr><th>Item</th><th style="width:3em;"></th></tr>
+        <tr><th>Item</th><th class="icons"></th></tr>
       </thead>
       <tbody data-bind="foreach: items">
         <tr data-bind="template: modeTemplate()"> 
@@ -61,12 +61,12 @@
   </div>
 
 <script type="text/html" id="item">
-  <td><div data-bind="attr: {'class' : 'indent' + indent()}"><span data-bind="text: item, click: setEditing"></span></div></td>
+  <td><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
   <td><i class="icon-remove" rel="tooltip" data-original-title="Delete item" data-bind="click: remove"></i></td>
 </script>
 <script type="text/html" id="itemEditing">
-  <td style="position:relative"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large" style="width:100%" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing" style="margin-top:0.5em;position: absolute;right: 0.6em;top: 0.6em;"></i></div></td>
-  <td><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em" data-bind="click: doIndent"></i></td>
+  <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing"></i></div></td>
+  <td class="icons"><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" data-bind="click: doIndent"></i></td>
 </script>
 
 </body>

@@ -14,6 +14,24 @@ body {
   margin-right: 0.2em;
   margin-bottom: -0.4em;
 }
+i.done {
+  margin-top: 0.5em;
+  position: absolute;
+  right: 1em;
+  top: 0.6em;
+}
+th.icons {
+  width: 3em;
+}
+td.icons > i {
+  margin-top: 0.5em;
+}
+td.itemEditing {
+  position: relative;
+}
+.fullwidth {
+  width: 100%;
+}
 /*
 .navbar {
   width: 440px;
