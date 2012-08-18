@@ -4,7 +4,6 @@ Deployed as a [demo][1] to [socialist.meteor.com][1]
 
 [1]: http://socialist.meteor.com
 
-A fork of the [leaderboard-coffeescript](https://github.com/srackham/leaderboard-coffeescript) project which is a port of [Meteor](http://meteor.com/) framework's [Leaderboard example](http://meteor.com/examples/leaderboard) rewritten using [CoffeeScript](http://coffeescript.org/), [Less](http://lesscss.org/) and Twitter [Bootstrap](http://twitter.github.com/bootstrap/).
 
 ## Installation
 To install create a meteor project and clone this repo into it (you have to move the `.meteor` directory out temporarily else git refuses to clone). You also need to install the Meteor jquery package and compile the CoffeeScript and Less files
@@ -22,3 +21,9 @@ To install create a meteor project and clone this repo into it (you have to move
 To start the project in the built-in Meteor server:
 
     meteor
+
+## Credits
+
+The project started as a fork from the [leaderboard-coffeescript](https://github.com/srackham/leaderboard-coffeescript) project which is a port of [Meteor](http://meteor.com/) framework's [Leaderboard example](http://meteor.com/examples/leaderboard) rewritten using [CoffeeScript](http://coffeescript.org/), [Less](http://lesscss.org/) and Twitter [Bootstrap](http://twitter.github.com/bootstrap/) 
+
+I'm also heavily relying on Steve Luscher's [knockout.meteor](https://github.com/steveluscher/knockout.meteor) project which connects [KnockoutJS](http://knockoutjs.com) and the Knockout Mapping plugin with Meteor.
