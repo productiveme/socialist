@@ -10,10 +10,6 @@
 
   <!-- Le styles -->
   <style>
-  body {
-    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-  }
-
   .brand > img {
     height: 1.5em;
     margin-top: -10px;
@@ -45,7 +41,7 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li class="reset_data" data-bind="click: resetData"><a href="#">Reset Data</a></li>
+              <li class="reset_data"><a href="#" data-bind="click: resetData">Reset Data</a></li>
             </ul>
           </li>
         </ul>
@@ -58,19 +54,19 @@
         <tr><th>Item</th><th style="width:3em;"></th></tr>
       </thead>
       <tbody data-bind="foreach: items">
-        <tr data-bind="template: modeTemplate()">
+        <tr data-bind="template: modeTemplate()"> 
         </tr>
       </tbody>
     </table>
   </div>
 
 <script type="text/html" id="item">
-  <td data-bind="text: item, click: setEditing"></td>
-  <td><i class="icon-remove" rel="tooltip" data-original-title="Delete item"></i></td>
+  <td><div data-bind="attr: {'class' : 'indent' + indent()}"><span data-bind="text: item, click: setEditing"></span></div></td>
+  <td><i class="icon-remove" rel="tooltip" data-original-title="Delete item" data-bind="click: remove"></i></td>
 </script>
 <script type="text/html" id="itemEditing">
-  <td style="position:relative"><input type="text" class="input-large" style="width:100%" data-bind="value: item" /><i data-bind="click: clearEditing" class="done icon-ok" rel="tooltip" data-original-title="Done editing" style="margin-top:0.5em;position: absolute;right: 0.4em;top: 0.5em;"></i></td>
-  <td><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em"></i></td>
+  <td style="position:relative"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large" style="width:100%" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing" style="margin-top:0.5em;position: absolute;right: 0.6em;top: 0.6em;"></i></div></td>
+  <td><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" style="margin-top:0.5em" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" style="margin-top:0.5em" data-bind="click: doIndent"></i></td>
 </script>
 
 </body>

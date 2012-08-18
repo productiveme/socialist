@@ -1,10 +1,13 @@
-/* Offset the container below the topbar
 body {
-   
+  /* Offset the container below the topbar */
 
   padding-top: 60px;
 }
-*/
+@media (max-width: 979px) {
+  body {
+    padding-top: 0;
+  }
+}
 .brand > img {
   height: 1.5em;
   margin-top: -10px;

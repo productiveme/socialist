@@ -5,13 +5,12 @@
   Items = new Meteor.Collection('items');
 
   reset_data = function() {
-    var curItem;
     Items.remove({});
-    curItem = Items.insert({
+    Items.insert({
       item: 'First Item',
       indent: 0
     });
-    curItem = Items.insert({
+    Items.insert({
       item: 'Second Item',
       indent: 0
     });
@@ -38,18 +37,73 @@
           parent.clearEditing = function() {
             return parent.isEditing(false);
           };
+          parent.doIndent = function() {
+            return parent.indent(parent.indent() + 1);
+          };
+          parent.doOutdent = function() {
+            return parent.indent(parent.indent() - 1);
+          };
+          parent.save = function() {
+            parent.isEditing(false);
+            return Items.update(parent._id(), {
+              $set: {
+                item: parent.item(),
+                indent: parent.indent()
+              }
+            });
+          };
+          parent.remove = function() {
+            return Items.remove(parent._id());
+          };
           return observable;
         }
       }
     };
-    viewModel = {
-      items: ko.meteor.find(Items, {}, {}, itemMapping),
-      resetData: function() {
-        return reset_data;
-      }
+    viewModel = function() {
+      var checkIndentationKeyBindings, indentOn2LeadingSpaces, items, outdentOnBackspaceAndEmpty, resetData, saveOnEnter;
+      items = ko.meteor.find(Items, {}, {}, itemMapping);
+      resetData = function() {
+        return reset_data();
+      };
+      indentOn2LeadingSpaces = function(model, event) {
+        if (event.which !== 32) {
+          return;
+        }
+        if (model.item().substr(0, 2) !== '  ') {
+          return;
+        }
+        model.item(model.item().substring(2));
+        return model.doIndent();
+      };
+      outdentOnBackspaceAndEmpty = function(model, event) {
+        if (event.which !== 8) {
+          return;
+        }
+        if (model.item() !== '') {
+          return;
+        }
+        return model.doOutdent();
+      };
+      checkIndentationKeyBindings = function(model, event) {
+        indentOn2LeadingSpaces(model, event);
+        return outdentOnBackspaceAndEmpty(model, event);
+      };
+      saveOnEnter = function(model, event) {
+        if (event.which !== 13) {
+          return true;
+        }
+        model.save();
+        return false;
+      };
+      return {
+        resetData: resetData,
+        items: items,
+        checkIndentationKeyBindings: checkIndentationKeyBindings,
+        saveOnEnter: saveOnEnter
+      };
     };
     Meteor.startup(function() {
-      return ko.applyBindings(viewModel);
+      return ko.applyBindings(new viewModel());
     });
   }
 
