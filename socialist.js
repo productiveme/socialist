@@ -8,23 +8,28 @@
     Items.remove({});
     Items.insert({
       item: 'First Item',
-      indent: 0
+      indent: 0,
+      archived: true
     });
     Items.insert({
       item: 'Second Item',
-      indent: 0
+      indent: 0,
+      archived: false
     });
     Items.insert({
       item: '1st Child of 2nd Item (shortcut: start with 2 or 3 spaces)',
-      indent: 1
+      indent: 1,
+      archived: false
     });
     Items.insert({
       item: 'Grandchild of 2nd Item',
-      indent: 2
+      indent: 2,
+      archived: false
     });
     Items.insert({
       item: '2nd Child of 2nd Item (shortcut: backspace when empty)',
-      indent: 1
+      indent: 1,
+      archived: false
     });
   };
 
@@ -65,7 +70,15 @@
             });
           };
           parent.remove = function() {
-            return Items.remove(parent._id());
+            if (parent.archived()) {
+              return Items.remove(parent._id());
+            } else {
+              return Items.update(parent._id(), {
+                $set: {
+                  archived: true
+                }
+              });
+            }
           };
           return observable;
         }

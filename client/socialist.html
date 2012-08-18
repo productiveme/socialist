@@ -67,8 +67,8 @@
   </div>
 
 <script type="text/html" id="item">
-  <td><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
-  <td><i class="icon-remove" rel="tooltip" data-original-title="Delete item" data-bind="click: remove"></i></td>
+  <td data-bind="css: { 'archived': archived }"><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
+  <td data-bind="css: { 'archived': archived }"><i class="icon-remove" rel="tooltip" data-original-title="Delete item" data-bind="click: remove"></i></td>
 </script>
 <script type="text/html" id="itemEditing">
   <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing"></i></div></td>

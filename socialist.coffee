@@ -5,18 +5,23 @@ reset_data = -> # Executes on both client and server.
   Items.insert
     item: 'First Item'
     indent: 0
+    archived: true
   Items.insert
     item: 'Second Item'
     indent: 0
+    archived: false
   Items.insert
     item: '1st Child of 2nd Item (shortcut: start with 2 or 3 spaces)'
     indent: 1
+    archived: false
   Items.insert
     item: 'Grandchild of 2nd Item'
     indent: 2
+    archived: false
   Items.insert
     item: '2nd Child of 2nd Item (shortcut: backspace when empty)'
     indent: 1
+    archived: false
 
   return
 
@@ -40,7 +45,12 @@ if Meteor.is_client
             $set: 
               item: parent.item()
               indent: parent.indent()
-        parent.remove = -> Items.remove parent._id()
+        parent.remove = -> 
+          if parent.archived()
+            Items.remove parent._id()
+          else
+            Items.update parent._id(), 
+              $set: archived: true
 
         return observable
 
