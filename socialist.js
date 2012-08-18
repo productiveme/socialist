@@ -91,7 +91,8 @@
       this.save = function() {
         Items.insert({
           item: _this.item(),
-          indent: _this.indent()
+          indent: _this.indent(),
+          archived: false
         });
         return _this.item('');
       };

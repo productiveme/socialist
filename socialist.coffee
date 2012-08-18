@@ -61,6 +61,7 @@ if Meteor.is_client
       Items.insert
         item: @item()
         indent: @indent()
+        archived: false
       @item('')
     @doIndent = =>
       @indent(@indent() + 1)
