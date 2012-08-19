@@ -14,7 +14,7 @@ body {
   margin-right: 0.2em;
   margin-bottom: -0.4em;
 }
-i.done {
+button.done {
   margin-top: 0.5em;
   position: absolute;
   right: 1em;
@@ -24,13 +24,15 @@ i.done {
   text-decoration: line-through;
 }
 th.icons {
-  width: 3em;
+  width: 6em;
 }
-td.icons > i {
-  margin-top: 0.5em;
+td.icons {
+  vertical-align: middle;
+  text-align: center;
 }
 td.itemEditing {
-  position: relative;
+  /*position:relative;*/
+
 }
 .fullwidth {
   width: 100%;

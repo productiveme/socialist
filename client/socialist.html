@@ -61,8 +61,8 @@
       </tbody>
       <tfoot>
         <tr data-bind="with: itemToInsert">
-          <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing"></i></div></td>
-          <td class="icons"><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" data-bind="click: doIndent"></i></td>
+          <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><div class="input-append row-fluid"><input type="text" class="input-large" style="width:85%" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn"><i data-bind="click: save" class="icon-ok"></i></button></div></div></td>
+          <td class="icons"><button class="btn" data-bind="click: doOutdent"><i class="icon-chevron-left"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-chevron-right"></i></button></td>
         </tr>
       </tfoot>
     </table>
@@ -70,11 +70,17 @@
 
 <script type="text/html" id="item">
   <td data-bind="css: { 'archived': archived }"><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
-  <td data-bind="css: { 'archived': archived }"><i class="icon-remove" rel="tooltip" data-original-title="Delete item" data-bind="click: remove"></i><i class="icon-ok" rel="tooltip" data-original-title="Unarchive item" data-bind="click: restore, visible: archived"></i></td>
+  <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i class="icon-remove"></i></button><button class="btn" data-bind="visible: archived,click: restore"><i class="icon-ok"></i></button></td>
 </script>
 <script type="text/html" id="itemEditing">
-  <td class="itemEditing"><div data-bind="attr: {'class' : 'indent' + indent()}"><input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><i data-bind="click: save" class="done icon-ok" rel="tooltip" data-original-title="Done editing"></i></div></td>
-  <td class="icons"><i class="icon-chevron-left" rel="tooltip" data-original-title="Outdent item" data-bind="click: doOutdent"></i><i class="icon-chevron-right" rel="tooltip" data-original-title="Indent item" data-bind="click: doIndent"></i></td>
+  <td class="itemEditing">
+    <div data-bind="attr: {'class' : 'indent' + indent()}">
+      <div class="input-append row-fluid">
+        <input type="text" class="input-large" style="width:85%" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn" data-bind="click: save"><i class="done icon-ok"></i></button>
+      </div>
+    </div>
+  </td>
+  <td class="icons"><button class="btn" data-bind="click: doOutdent"><i class="icon-chevron-left"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-chevron-right"></i></button></td>
 </script>
 
 </body>
