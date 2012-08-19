@@ -26,12 +26,19 @@ i.move {
 th.icons {
   width: 6em;
 }
+td.bullet {
+  vertical-align: middle;
+  text-align: center;
+}
 th.bullet {
   width: 0.5em;
 }
 td.icons {
   vertical-align: middle;
   text-align: center;
+}
+td.item {
+  vertical-align: middle;
 }
 td.itemEditing {
   position: relative;

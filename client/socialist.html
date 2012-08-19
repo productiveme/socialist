@@ -73,8 +73,8 @@
   </div>
 
 <script type="text/html" id="item">
-  <td><i class="move icon-move" data-bind="click: $root.moveItem, visible: !$root.isMoving()"></i><i class="move icon-download" data-bind="click: $root.moveHere, visible: $root.isMoving()"></i></td>
-  <td data-bind="css: { 'archived': archived }"><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
+  <td class="bullet"><i class="move icon-move" data-bind="click: $root.moveItem, visible: !$root.isMoving()"></i><i class="move icon-download" data-bind="click: $root.moveHere, visible: $root.isMoving()"></i></td>
+  <td class="item" data-bind="css: { 'archived': archived }"><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
   <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-ban-circle' : !archived(), 'icon-trash' : archived }"></i></button></td>
 </script>
 <script type="text/html" id="itemEditing">
