@@ -61,7 +61,8 @@
       </tbody>
       <tfoot>
         <tr data-bind="with: itemToInsert">
-          <td class="itemEditing" colspan=2>
+          <td class="bullet"></td>
+          <td class="itemEditing" >
             <div data-bind="attr: {'class' : 'indent' + indent()}">
               <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
             </div>
@@ -78,7 +79,8 @@
   <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-ban-circle' : !archived(), 'icon-trash' : archived }"></i></button></td>
 </script>
 <script type="text/html" id="itemEditing">
-  <td class="itemEditing" colspan=2>
+  <td class="bullet"></td>
+  <td class="itemEditing">
     <div data-bind="attr: {'class' : 'indent' + indent()}">
         <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
     </div>
