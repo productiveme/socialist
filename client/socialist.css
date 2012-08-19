@@ -20,8 +20,14 @@ button.done {
 .archived {
   text-decoration: line-through;
 }
+i.move {
+  cursor: pointer;
+}
 th.icons {
   width: 6em;
+}
+th.bullet {
+  width: 0.5em;
 }
 td.icons {
   vertical-align: middle;
