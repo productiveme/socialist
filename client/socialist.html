@@ -41,6 +41,7 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
             <ul class="dropdown-menu">
+              <li><a href="/" data-bind="click: newList">Create new list</a></li>
               <li><a href="#" data-bind="click: resetData">Reset Data</a></li>
               <li><a href="#" data-bind="click: showJSON">Show JSON</a></li>
             </ul>
@@ -49,9 +50,34 @@
       </div>
     </div>
   </div>
-  <div class="container">
-    <div data-bind="visible: showingJSON, text: json" style="display:none;"></div>
-    <table class="table table-striped" data-bind="visible: !showingJSON()">
+  <div class="container" data-bind="template: { name: templateToUse, data: vm }">
+  </div>
+  <div data-bind="visible: showingJSON, text: json" style="display:none;" class="container"></div>
+
+<script type="text/html" id="newList">
+  <div class="row-fluid">
+    <div class="span3"></div>
+    <div class="form-horizontal span6">
+      <fieldset>
+        <legend>Create a new list</legend>
+        <div class="control-group">
+          <label class="control-label" for="listName">List name</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" id="listName" data-bind="value: name">
+            <p class="help-block">E.g. Shopping List</p>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" data-bind="click: save">Create List</button>            
+        </div>
+      </fieldset>
+    </div>
+    <div class="span3"></div>
+  </div>
+</script>
+
+<script type="text/html" id="socialist">
+    <table class="table table-striped" data-bind="visible: !$root.showingJSON()">
       <thead>
         <tr><th class="bullet"></th><th>Item</th><th class="icons"></th></tr>
       </thead>
@@ -64,17 +90,17 @@
           <td class="bullet"></td>
           <td class="itemEditing" >
             <div data-bind="attr: {'class' : 'indent' + indent()}">
-              <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
+              <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $parent.checkIndentationKeyBindings, keydown: $parent.saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
             </div>
           </td>
           <td class="icons"><button class="btn" data-bind="click: doOutdent"><i class="icon-indent-left"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-indent-right"></i></button></td>
         </tr>
       </tfoot>
     </table>
-  </div>
+</script>
 
 <script type="text/html" id="item">
-  <td class="bullet"><i class="move icon-move" data-bind="click: $root.moveItem, visible: !$root.isMoving()"></i><i class="move icon-download" data-bind="click: $root.moveHere, visible: $root.isMoving()"></i></td>
+  <td class="bullet"><i class="move icon-move" data-bind="click: $root.vm().moveItem, visible: !$root.vm().isMoving()"></i><i class="move icon-download" data-bind="click: $root.vm().moveHere, visible: $root.vm().isMoving()"></i></td>
   <td class="item" data-bind="css: { 'archived': archived }"><div data-bind="attr: {'class' : 'indent' + indent()}, text: item, click: setEditing" class="fullwidth"></div></td>
   <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-ban-circle' : !archived(), 'icon-trash' : archived }"></i></button></td>
 </script>
@@ -82,7 +108,7 @@
   <td class="bullet"></td>
   <td class="itemEditing">
     <div data-bind="attr: {'class' : 'indent' + indent()}">
-        <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.checkIndentationKeyBindings, keydown: $root.saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
+        <input type="text" class="input-large fullwidth" data-bind="value: item, valueUpdate: 'afterkeydown', event: { keyup: $root.vm().checkIndentationKeyBindings, keydown: $root.vm().saveOnEnter }" /><button class="btn done" data-bind="click: save"><i class="done icon-ok"></i></button>
     </div>
   </td>
   <td class="icons"><button class="btn" data-bind="click: doOutdent"><i class="icon-indent-left"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-indent-right"></i></button></td>

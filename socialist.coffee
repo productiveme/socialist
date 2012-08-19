@@ -1,14 +1,16 @@
 Items = new Meteor.Collection 'items'
 
 reset_data = -> # Executes on both client and server.
-  Items.remove {}
-  samples = [{"isEditing":false,"item":"Current Sprint","indent":0,"archived":false,"sortOrder":0,"_id":"9f1056eb-9064-4973-89e8-6d58f6b7c014"},{"isEditing":false,"item":"Archive before delete","indent":1,"archived":true,"sortOrder":8,"_id":"bdea2f38-ded5-4189-84bf-3dfd3aa029b6"},{"isEditing":false,"item":"Ability to unarchive","indent":1,"archived":true,"sortOrder":16,"_id":"97078551-5005-4e3c-afb4-e0f497ff6a6a"},{"isEditing":false,"item":"Bigger, better action icons. Change to buttons?","indent":1,"archived":true,"sortOrder":24,"_id":"19b6c5f6-482b-4be0-998b-96fa31ac7793"},{"_id":"e05521c0-2206-4f2d-8909-ba4b5ca3963d","isEditing":false,"item":"Ability to rearrange items","indent":1,"archived":true,"sortOrder":32},{"_id":"395b4711-a0fc-46dd-8fde-9acdf7b37374","isEditing":false,"item":"Children should move with parent","indent":1,"archived":false,"sortOrder":36},{"isEditing":false,"item":"Ability to insert an item anywhere in the list","indent":1,"archived":false,"sortOrder":40,"_id":"c6271cdd-df56-454c-88dc-c048dc5392c0"},{"isEditing":false,"item":"Children should archive/delete with parent","indent":1,"archived":false,"sortOrder":48,"_id":"47022ce4-5a9d-403e-b01f-1088702f9817"},{"isEditing":false,"item":"Children should indent/outdent with parent","indent":1,"archived":false,"sortOrder":56,"_id":"b6b4bab6-4792-4595-b2c2-17437b8f7fd9"},{"isEditing":false,"item":"Should not be able to indent more than one level below parent","indent":1,"archived":false,"sortOrder":64,"_id":"2687fef5-6168-4d6d-9154-eb4b2baa5093"},{"isEditing":false,"item":"Should not be able to outdent past 0","indent":1,"archived":true,"sortOrder":72,"_id":"cd5a846b-9420-4637-aaa8-a7f0b8a7d1ac"},{"isEditing":false,"item":"Ability to create a new uniquely named list","indent":1,"archived":false,"sortOrder":80,"_id":"87e66da4-8fe8-4bd6-8c8b-073b46326a2a"},{"isEditing":false,"item":"Shareable url for each list","indent":1,"archived":false,"sortOrder":88,"_id":"035a0a44-a52f-484e-89e4-9c0fa5413c55"},{"isEditing":false,"item":"Backlog","indent":0,"archived":false,"sortOrder":96,"_id":"c907dfd3-0bab-4619-847d-6b83c03ed8b1"},{"isEditing":false,"item":"Ability to password protect a list","indent":1,"archived":false,"sortOrder":104,"_id":"e7cadc57-c93a-4e47-8102-cad6ee5519c2"},{"isEditing":false,"item":"Ability to add a checkbox column, parent indicates number of checked children","indent":1,"archived":false,"sortOrder":112,"_id":"8afbab81-8214-4453-9b51-de3960ac98a2"},{"isEditing":false,"item":"Ability to add a numeric column, parent shows sum of children","indent":1,"archived":false,"sortOrder":120,"_id":"874354c1-d646-4b1a-bb0f-e3b848ecf39b"},{"isEditing":false,"item":"Textarea instead of single line textbox. Should grow instead of scroll and allow line breaks","indent":1,"archived":false,"sortOrder":128,"_id":"4ce58328-61ff-4234-8edd-74f4d7568adf"}]
+  Items.remove {list: vm.listName?() or 'Sample'}
+  samples = [{"_id":"63cdab2e-7402-4397-839a-dc1a4e29a6b8","isEditing":false,"item":"Current Sprint","indent":0,"archived":false,"list":"Sample","sortOrder":0},{"_id":"b088463c-bf98-4350-8a88-c5e82beef6cb","isEditing":false,"item":"Archive before delete","indent":1,"archived":true,"list":"Sample","sortOrder":8},{"_id":"99bf135f-8fa9-4961-959c-0adbb4077a5c","isEditing":false,"item":"Ability to unarchive","indent":1,"archived":true,"list":"Sample","sortOrder":16},{"_id":"a3849832-b67f-4e5e-8f7e-c052df9cf125","isEditing":false,"item":"Bigger, better action icons. Change to buttons?","indent":1,"archived":true,"list":"Sample","sortOrder":24},{"_id":"32b65b93-2a7c-496b-9a68-fcd205f437d7","isEditing":false,"item":"Ability to rearrange items","indent":1,"archived":true,"list":"Sample","sortOrder":32},{"_id":"785122d5-0f49-4390-b8d4-28ba4ed6a493","isEditing":false,"item":"Should not be able to outdent past 0","indent":1,"archived":true,"list":"Sample","sortOrder":40},{"_id":"85b8c0e1-1a2d-41c0-9e3f-6657298a001c","isEditing":false,"item":"Ability to create a new uniquely named list","indent":1,"archived":true,"list":"Sample","sortOrder":44},{"_id":"7b73c85d-63de-4a3e-978d-0ee929ae1a6b","isEditing":false,"item":"Shareable url for each list","indent":1,"archived":true,"list":"Sample","sortOrder":46},{"_id":"039cef9a-36a9-443d-9376-3bb78b01eb09","isEditing":false,"item":"Children should move with parent","indent":1,"archived":false,"list":"Sample","sortOrder":48},{"_id":"e8baf6d3-349a-4a30-aa7c-7f0853e1815e","isEditing":false,"item":"Ability to insert an item anywhere in the list","indent":1,"archived":false,"list":"Sample","sortOrder":56},{"_id":"7795416a-2774-4d3a-b15f-f7472eafbf72","isEditing":false,"item":"Children should archive/delete with parent","indent":1,"archived":false,"list":"Sample","sortOrder":64},{"_id":"e149284a-796c-4e32-8d87-4696f8870e16","isEditing":false,"item":"Children should indent/outdent with parent","indent":1,"archived":false,"list":"Sample","sortOrder":72},{"_id":"b8556c4e-20d1-498b-947d-f3694257fc9c","isEditing":false,"item":"Should not be able to indent more than one level below parent","indent":1,"archived":false,"list":"Sample","sortOrder":80},{"_id":"cd648315-bcae-4cd4-8f01-8f3886fe2271","isEditing":false,"item":"Backlog","indent":0,"archived":false,"list":"Sample","sortOrder":104},{"_id":"4d806c2d-7229-45a5-870f-147b96be2a80","isEditing":false,"item":"Ability to password protect a list","indent":1,"archived":false,"list":"Sample","sortOrder":112},{"_id":"3a03c271-8510-4eb3-8a20-b9695bcd7673","isEditing":false,"item":"Ability to add a checkbox column, parent indicates number of checked children","indent":1,"archived":false,"list":"Sample","sortOrder":120},{"_id":"28445766-f0dd-47a0-8dd0-7bc76808d813","isEditing":false,"item":"Ability to add a numeric column, parent shows sum of children","indent":1,"archived":false,"list":"Sample","sortOrder":128},{"_id":"67a97434-3cc5-4bea-8a0d-781d2b2d0723","isEditing":false,"item":"Textarea instead of single line textbox. Should grow instead of scroll and allow line breaks","indent":1,"archived":false,"list":"Sample","sortOrder":136}]
   for sample in samples
     Items.insert
       item: sample.item
       indent: sample.indent
       archived: sample.archived
-      sortOrder: sample.sortOrder  
+      list: vm.listName?() or 'Sample'
+      #sortOrder: _i * 8
+      sortOrder: sample.sortOrder
   return
 
 if Meteor.is_client
@@ -46,11 +48,13 @@ if Meteor.is_client
     @item = ko.observable('')
     @indent = ko.observable(0)
     @save = =>
+      items = vm.vm().items();
       Items.insert
         item: @item()
         indent: @indent()
         archived: false
-        sortOrder: vm.items()[vm.items().length-1].sortOrder() + 8
+        sortOrder: if items.length then items[items.length-1].sortOrder() + 8 else 0
+        list: vm.listName()
       @item('')
     @doIndent = =>
       @indent(@indent() + 1)
@@ -58,16 +62,21 @@ if Meteor.is_client
       @indent(@indent() - 1) if @indent() > 0
     return
 
+  newListModel = (parent) ->
+    @name = ko.observable ''
+    @save = =>
+      Session.set 'listName', canonicalListName @name()
+      window.location.href = 'http://localhost:3000/#!' + canonicalListName(@name())
+      window.location.reload() #parent.listName canonicalListName(@name())
+      return
+    return   
 
-  viewModel = ->
+  listModel = (parent) ->
     _this = this
-    items = ko.meteor.find(Items, {}, {sort: {sortOrder: 1}}, itemMapping)
+    items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)
     itemToInsert = new blankItem()
-    showingJSON = ko.observable false
-    json = ko.observable ''
     isMoving = ko.observable false
     movingItemId = ''
-    resetData = -> reset_data()
     indentOn2LeadingSpaces = (model,event) ->
       return unless event.which is 32
       return unless model.item().substr(0,2) is '  '
@@ -85,12 +94,6 @@ if Meteor.is_client
       return true unless event.which is 13
       model.save()
       return false
-    showJSON = ->
-      json(ko.mapping.toJSON(@items))
-      showingJSON(true)
-      setTimeout -> 
-        showingJSON(false)
-      , 10000
     moveItem = (data) ->
       movingItemId = data._id()
       items.remove data
@@ -106,21 +109,43 @@ if Meteor.is_client
       isMoving false
 
     return {
-      resetData: resetData
       items: items
       itemToInsert: itemToInsert
-      showingJSON: showingJSON
-      json: json
       # indentOn2LeadingSpaces: indentOn2LeadingSpaces
       # outdentOnBackspaceAndEmpty: outdentOnBackspaceAndEmpty
       checkIndentationKeyBindings: checkIndentationKeyBindings
       saveOnEnter: saveOnEnter
-      showJSON: showJSON
       # movingItem: movingItem
       moveItem : moveItem
       isMoving: isMoving
       moveHere: moveHere
     }
+
+  viewModel = ->
+    @listName = ko.observable canonicalListName(Session.get 'listName')
+    @showingJSON = ko.observable false
+    @json = ko.observable ''
+    @templateToUse = =>
+      return if @listName() then 'socialist' else 'newList'
+    @vm = ko.observable(if @listName() is '' then new newListModel(@) else new listModel(@))
+    @listName.subscribe =>
+      if @listName() is '' then @vm(new newListModel(@)) else @vm(new listModel(@))
+    @resetData = -> reset_data()
+    @showJSON = =>
+      if @vm().items then @json ko.mapping.toJSON(@vm().items)
+      @showingJSON true
+      setTimeout => 
+        @showingJSON false
+      , 10000
+    @newList = ->
+      Session.set 'listName', ''
+      return true
+    return
+
+  canonicalListName = (name) ->
+    name.replace(/[^A-z0-9\s]*/g,'').replace(/\s+/g, '-')
+
+  Session.set 'listName', window.location.hash.replace('#!', '') or ''
 
   vm = new viewModel()
 
