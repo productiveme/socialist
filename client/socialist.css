@@ -15,10 +15,12 @@ body {
   margin-bottom: -0.4em;
 }
 button.done {
-  margin-top: 0.5em;
   position: absolute;
-  right: 1em;
-  top: 0.6em;
+  right: -0.2em;
+  top: 1.2em;
+  -webkit-border-radius: 0 3px 3px 0;
+  -moz-border-radius: 0 3px 3px 0;
+  border-radius: 0 3px 3px 0;
 }
 .archived {
   text-decoration: line-through;
@@ -31,8 +33,10 @@ td.icons {
   text-align: center;
 }
 td.itemEditing {
-  /*position:relative;*/
-
+  position: relative;
+}
+td.itemEditing input {
+  margin-top: 0.65em;
 }
 .fullwidth {
   width: 100%;
