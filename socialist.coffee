@@ -66,7 +66,7 @@ if Meteor.is_client
     @name = ko.observable ''
     @save = =>
       Session.set 'listName', canonicalListName @name()
-      window.location.href = 'http://localhost:3000/#!' + canonicalListName(@name())
+      window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(@name())
       window.location.reload() #parent.listName canonicalListName(@name())
       return
     return   

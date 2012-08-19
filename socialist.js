@@ -252,7 +252,7 @@
       this.name = ko.observable('');
       this.save = function() {
         Session.set('listName', canonicalListName(_this.name()));
-        window.location.href = 'http://localhost:3000/#!' + canonicalListName(_this.name());
+        window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(_this.name());
         window.location.reload();
       };
     };
