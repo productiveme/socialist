@@ -372,13 +372,18 @@
         });
       };
       this.archiveAll = function() {
-        return Items.update({
-          list: _this.listName()
-        }, {
-          $set: {
-            archived: true
+        var itm, _i, _len, _ref;
+        if (_this.vm().items) {
+          _ref = _this.vm().items();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            itm = _ref[_i];
+            Items.update(itm._id(), {
+              $set: {
+                archived: true
+              }
+            });
           }
-        }, false, true);
+        }
       };
     };
     canonicalListName = function(name) {

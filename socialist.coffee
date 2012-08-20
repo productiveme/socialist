@@ -145,10 +145,11 @@ if Meteor.is_client
         list: @listName()
         archived: true
     @archiveAll = =>
-      Items.update { list: @listName() }, 
-        $set: archived: true
-      , false
-      , true
+      if @vm().items
+        for itm in @vm().items()
+          Items.update itm._id(), 
+            $set: archived: true
+      return
     return
 
   canonicalListName = (name) ->
