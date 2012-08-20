@@ -23,6 +23,9 @@ button.done {
 i.move {
   cursor: pointer;
 }
+.moving {
+  color: #b3b3b3;
+}
 th.icons {
   width: 6em;
 }

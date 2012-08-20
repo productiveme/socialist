@@ -12,164 +12,184 @@
     samples = [
       {
         "isEditing": false,
+        "isMoving": false,
         "item": "Current Sprint",
         "indent": 0,
         "archived": false,
         "list": "Sample",
         "sortOrder": 0,
-        "_id": "e5da7063-bebb-41f0-b083-bd8d5a02b632"
+        "_id": "18b8cab5-c3ff-4146-8857-f05f13343ca1"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Archive before delete",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 8,
-        "_id": "2159a75a-705f-48ae-9605-adb472a6177b"
+        "_id": "6ccf87a0-15af-44fe-8af3-724b06ede53e"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to unarchive",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 16,
-        "_id": "d90417b7-6fee-466b-8a64-c593b5199483"
+        "_id": "d068666e-a6f8-41d5-9d6a-5972922b07d1"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Bigger, better action icons. Change to buttons?",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 24,
-        "_id": "1e9a1e68-45f9-41cb-b158-6219852cf84f"
+        "_id": "ce5a2b43-20c4-4668-8f95-eee40a9aaa70"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to rearrange items",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 32,
-        "_id": "38065f1d-3c8a-4321-8007-7e3408095cd8"
+        "_id": "bfbcf42e-3e27-4843-805b-f0816239d1fa"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Should not be able to outdent past 0",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 40,
-        "_id": "3b336c23-5532-4d46-a1cb-98eb3a6a37f5"
+        "_id": "93e1f66c-7658-4721-9178-a478287592f7"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to create a new uniquely named list",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 44,
-        "_id": "d0c4ff23-2560-452b-940b-d220e128314a"
+        "_id": "ea3c97d9-785c-46d2-9b4a-0e3e821c1b29"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Shareable url for each list",
         "indent": 1,
         "archived": true,
         "list": "Sample",
         "sortOrder": 46,
-        "_id": "d3b8cc8e-bcae-4b13-858f-bb03463002ef"
+        "_id": "480c53f2-2ab8-4d27-babc-9facd88dd0fb"
       }, {
-        "_id": "f741e7c6-71fb-4b01-8ff1-95f78ed81f38",
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to clear archived items",
         "indent": 1,
         "archived": true,
+        "list": "Sample",
         "sortOrder": 47,
-        "list": "Sample"
+        "_id": "4272ebcd-15a9-46f1-8bfc-5e7019d45e6a"
       }, {
-        "_id": "74aba5f8-6d52-4cb4-931f-4cd4e40c2293",
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to archive all items",
         "indent": 1,
         "archived": true,
+        "list": "Sample",
         "sortOrder": 47.5,
-        "list": "Sample"
+        "_id": "5948255b-fe56-4e16-be29-92b20f8e3173"
       }, {
-        "_id": "dde8a646-084c-4073-8cb4-4d415724b904",
         "isEditing": false,
+        "isMoving": false,
         "item": "Should not be able to indent more than one level below parent",
         "indent": 1,
-        "archived": false,
+        "archived": true,
         "list": "Sample",
-        "sortOrder": 47.75
+        "sortOrder": 47.75,
+        "_id": "1881c8f3-cb81-4ef1-85d8-d2c4d06d8ca2"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Children should move with parent",
         "indent": 1,
-        "archived": false,
+        "archived": true,
         "list": "Sample",
         "sortOrder": 48,
-        "_id": "2a96fa17-36ca-4536-88ce-94e763d64933"
+        "_id": "3832b582-36a4-4cf0-a896-b49bf296c9bb"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Children should archive/delete with parent",
         "indent": 1,
-        "archived": false,
+        "archived": true,
         "list": "Sample",
         "sortOrder": 64,
-        "_id": "fef1e673-5369-45c0-bdf7-833134c3a337"
+        "_id": "d0e6f0e0-0bfa-4be7-ae2f-15fbfaf69282"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Children should indent/outdent with parent",
         "indent": 1,
-        "archived": false,
+        "archived": true,
         "list": "Sample",
         "sortOrder": 72,
-        "_id": "d0d06cac-382a-48cb-83b0-65d7dd0bbd9e"
+        "_id": "af8725c6-1013-4f13-803c-aaaf611644d5"
       }, {
-        "_id": "3625d6c1-d406-4793-8886-b0294e455ff8",
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to insert an item anywhere in the list",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 92
+        "sortOrder": 92,
+        "_id": "f83b131e-7cd6-4f0a-83f1-384a9f8154f8"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Backlog",
         "indent": 0,
         "archived": false,
         "list": "Sample",
         "sortOrder": 104,
-        "_id": "5ffcf743-8940-4321-8029-b6b1bbf2be31"
+        "_id": "4b7adb1e-5f4f-41b6-9697-d11c5b187885"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to password protect a list",
         "indent": 1,
         "archived": false,
         "list": "Sample",
         "sortOrder": 112,
-        "_id": "d0524a04-b728-4f6f-9e45-6443849e44d0"
+        "_id": "934c0752-c323-44f6-bf25-e51128b5d4b9"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to add a checkbox column, parent indicates number of checked children",
         "indent": 1,
         "archived": false,
         "list": "Sample",
         "sortOrder": 120,
-        "_id": "54d8b5c8-d337-40be-aea1-1c71bde1b570"
+        "_id": "5608c834-fa53-4767-b47b-f2f90ea53fac"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Ability to add a numeric column, parent shows sum of children",
         "indent": 1,
         "archived": false,
         "list": "Sample",
         "sortOrder": 128,
-        "_id": "1195ca4b-04d7-4e4f-8aa3-ab46ae8f2f90"
+        "_id": "6a7e6a6f-9379-4dcb-878a-ded43f6e6341"
       }, {
         "isEditing": false,
+        "isMoving": false,
         "item": "Textarea instead of single line textbox. Should grow instead of scroll and allow line breaks",
         "indent": 1,
         "archived": false,
         "list": "Sample",
         "sortOrder": 136,
-        "_id": "a12fc44f-077e-421d-82f7-c183038f98b8"
+        "_id": "796952aa-f787-449e-97cc-736c990bcad3"
       }
     ];
     for (_i = 0, _len = samples.length; _i < _len; _i++) {
@@ -192,6 +212,7 @@
           parent = options.parent;
           observable = ko.observable(options.data);
           parent.isEditing = ko.observable(false);
+          parent.isMoving = ko.observable(false);
           parent.modeTemplate = function() {
             if (parent.isEditing()) {
               return 'itemEditing';
@@ -206,11 +227,59 @@
             return parent.isEditing(false);
           };
           parent.doIndent = function() {
-            return parent.indent(parent.indent() + 1);
+            var itm, maxIndent, pi, pos, _i, _len, _ref, _results;
+            maxIndent = 0;
+            pos = vm.vm().items().indexOf(parent);
+            if (pos > 0) {
+              maxIndent = vm.vm().items()[pos - 1].indent() + 1;
+            }
+            if (parent.indent() < maxIndent) {
+              pi = parent.indent();
+              Items.update(parent._id(), {
+                $inc: {
+                  indent: 1
+                }
+              });
+              _ref = vm.vm().items.slice(pos + 1);
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                itm = _ref[_i];
+                if (itm.indent() <= pi) {
+                  break;
+                }
+                _results.push(Items.update(itm._id(), {
+                  $inc: {
+                    indent: 1
+                  }
+                }));
+              }
+              return _results;
+            }
           };
           parent.doOutdent = function() {
+            var itm, pi, pos, _i, _len, _ref, _results;
             if (parent.indent() > 0) {
-              return parent.indent(parent.indent() - 1);
+              pos = vm.vm().items().indexOf(parent);
+              pi = parent.indent();
+              Items.update(parent._id(), {
+                $inc: {
+                  indent: -1
+                }
+              });
+              _ref = vm.vm().items.slice(pos + 1);
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                itm = _ref[_i];
+                if (itm.indent() <= pi) {
+                  break;
+                }
+                _results.push(Items.update(itm._id(), {
+                  $inc: {
+                    indent: -1
+                  }
+                }));
+              }
+              return _results;
             }
           };
           parent.save = function() {
@@ -224,14 +293,41 @@
             });
           };
           parent.remove = function() {
+            var itm, pi, pos, _i, _j, _len, _len1, _ref, _ref1, _results, _results1;
+            pos = vm.vm().items().indexOf(parent);
+            pi = parent.indent();
             if (parent.archived()) {
-              return Items.remove(parent._id());
+              Items.remove(parent._id());
+              _ref = vm.vm().items.slice(pos + 1);
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                itm = _ref[_i];
+                if (itm.indent() <= pi) {
+                  break;
+                }
+                _results.push(Items.remove(itm._id()));
+              }
+              return _results;
             } else {
-              return Items.update(parent._id(), {
+              Items.update(parent._id(), {
                 $set: {
                   archived: true
                 }
               });
+              _ref1 = vm.vm().items.slice(pos + 1);
+              _results1 = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                itm = _ref1[_j];
+                if (itm.indent() <= pi) {
+                  break;
+                }
+                _results1.push(Items.update(itm._id(), {
+                  $set: {
+                    archived: true
+                  }
+                }));
+              }
+              return _results1;
             }
           };
           return observable;
@@ -255,7 +351,14 @@
         return _this.item('');
       };
       this.doIndent = function() {
-        return _this.indent(_this.indent() + 1);
+        var maxIndent;
+        maxIndent = 0;
+        try {
+          maxIndent = vm.vm().items()[vm.vm().items().length - 1].indent() + 1;
+        } catch (_error) {}
+        if (_this.indent() < maxIndent) {
+          return _this.indent(_this.indent() + 1);
+        }
       };
       this.doOutdent = function() {
         if (_this.indent() > 0) {
@@ -280,7 +383,7 @@
       };
     };
     listModel = function(parent) {
-      var checkIndentationKeyBindings, indentOn2LeadingSpaces, isMoving, itemToInsert, items, moveHere, moveItem, movingItemId, outdentOnBackspaceAndEmpty, saveOnEnter, _this;
+      var checkIndentationKeyBindings, indentOn2LeadingSpaces, isMoving, itemToInsert, items, itemsToMove, moveHere, moveItem, outdentOnBackspaceAndEmpty, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
@@ -291,7 +394,7 @@
       }, itemMapping);
       itemToInsert = new blankItem();
       isMoving = ko.observable(false);
-      movingItemId = '';
+      itemsToMove = [];
       indentOn2LeadingSpaces = function(model, event) {
         if (event.which !== 32) {
           return;
@@ -323,23 +426,44 @@
         return false;
       };
       moveItem = function(data) {
-        movingItemId = data._id();
-        items.remove(data);
+        var itm, pos, _i, _len, _ref;
+        pos = items.indexOf(data);
+        itemsToMove = [];
+        itemsToMove.push(data);
+        data.isMoving(true);
+        _ref = items.slice(pos + 1);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          itm = _ref[_i];
+          if (itm.indent() <= data.indent()) {
+            break;
+          }
+          itemsToMove.push(itm);
+          itm.isMoving(true);
+        }
         return isMoving(true);
       };
       moveHere = function(data) {
-        var newSortOrder, nextItem;
+        var i, indentIncrement, itm, newSortOrder, nextItem, sortIncrement, _i, _len;
         nextItem = items()[items.indexOf(data) + 1];
-        newSortOrder = data.sortOrder() + 10;
+        sortIncrement = 8;
+        indentIncrement = data.indent() < itemsToMove[0].indent() - 1 ? data.indent() - itemsToMove[0].indent() + 1 : 0;
         try {
-          newSortOrder = data.sortOrder() + (nextItem.sortOrder() - data.sortOrder()) / 2;
+          sortIncrement = (nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1);
         } catch (_error) {}
-        Items.update(movingItemId, {
-          $set: {
-            sortOrder: newSortOrder
-          }
-        });
-        movingItemId = '';
+        for (i = _i = 0, _len = itemsToMove.length; _i < _len; i = ++_i) {
+          itm = itemsToMove[i];
+          newSortOrder = data.sortOrder() + (sortIncrement * (i + 1));
+          Items.update(itm._id(), {
+            $set: {
+              sortOrder: newSortOrder
+            },
+            $inc: {
+              indent: indentIncrement
+            }
+          });
+          itm.isMoving(false);
+        }
+        itemsToMove = [];
         return isMoving(false);
       };
       return {
