@@ -11,149 +11,165 @@
     });
     samples = [
       {
-        "_id": "63cdab2e-7402-4397-839a-dc1a4e29a6b8",
         "isEditing": false,
         "item": "Current Sprint",
         "indent": 0,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 0
+        "sortOrder": 0,
+        "_id": "e5da7063-bebb-41f0-b083-bd8d5a02b632"
       }, {
-        "_id": "b088463c-bf98-4350-8a88-c5e82beef6cb",
         "isEditing": false,
         "item": "Archive before delete",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 8
+        "sortOrder": 8,
+        "_id": "2159a75a-705f-48ae-9605-adb472a6177b"
       }, {
-        "_id": "99bf135f-8fa9-4961-959c-0adbb4077a5c",
         "isEditing": false,
         "item": "Ability to unarchive",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 16
+        "sortOrder": 16,
+        "_id": "d90417b7-6fee-466b-8a64-c593b5199483"
       }, {
-        "_id": "a3849832-b67f-4e5e-8f7e-c052df9cf125",
         "isEditing": false,
         "item": "Bigger, better action icons. Change to buttons?",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 24
+        "sortOrder": 24,
+        "_id": "1e9a1e68-45f9-41cb-b158-6219852cf84f"
       }, {
-        "_id": "32b65b93-2a7c-496b-9a68-fcd205f437d7",
         "isEditing": false,
         "item": "Ability to rearrange items",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 32
+        "sortOrder": 32,
+        "_id": "38065f1d-3c8a-4321-8007-7e3408095cd8"
       }, {
-        "_id": "785122d5-0f49-4390-b8d4-28ba4ed6a493",
         "isEditing": false,
         "item": "Should not be able to outdent past 0",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 40
+        "sortOrder": 40,
+        "_id": "3b336c23-5532-4d46-a1cb-98eb3a6a37f5"
       }, {
-        "_id": "85b8c0e1-1a2d-41c0-9e3f-6657298a001c",
         "isEditing": false,
         "item": "Ability to create a new uniquely named list",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 44
+        "sortOrder": 44,
+        "_id": "d0c4ff23-2560-452b-940b-d220e128314a"
       }, {
-        "_id": "7b73c85d-63de-4a3e-978d-0ee929ae1a6b",
         "isEditing": false,
         "item": "Shareable url for each list",
         "indent": 1,
         "archived": true,
         "list": "Sample",
-        "sortOrder": 46
+        "sortOrder": 46,
+        "_id": "d3b8cc8e-bcae-4b13-858f-bb03463002ef"
       }, {
-        "_id": "039cef9a-36a9-443d-9376-3bb78b01eb09",
+        "_id": "f741e7c6-71fb-4b01-8ff1-95f78ed81f38",
         "isEditing": false,
-        "item": "Children should move with parent",
+        "item": "Ability to clear archived items",
         "indent": 1,
-        "archived": false,
-        "list": "Sample",
-        "sortOrder": 48
+        "archived": true,
+        "sortOrder": 47,
+        "list": "Sample"
       }, {
-        "_id": "e8baf6d3-349a-4a30-aa7c-7f0853e1815e",
+        "_id": "74aba5f8-6d52-4cb4-931f-4cd4e40c2293",
         "isEditing": false,
-        "item": "Ability to insert an item anywhere in the list",
+        "item": "Ability to archive all items",
         "indent": 1,
-        "archived": false,
-        "list": "Sample",
-        "sortOrder": 56
+        "archived": true,
+        "sortOrder": 47.5,
+        "list": "Sample"
       }, {
-        "_id": "7795416a-2774-4d3a-b15f-f7472eafbf72",
-        "isEditing": false,
-        "item": "Children should archive/delete with parent",
-        "indent": 1,
-        "archived": false,
-        "list": "Sample",
-        "sortOrder": 64
-      }, {
-        "_id": "e149284a-796c-4e32-8d87-4696f8870e16",
-        "isEditing": false,
-        "item": "Children should indent/outdent with parent",
-        "indent": 1,
-        "archived": false,
-        "list": "Sample",
-        "sortOrder": 72
-      }, {
-        "_id": "b8556c4e-20d1-498b-947d-f3694257fc9c",
+        "_id": "dde8a646-084c-4073-8cb4-4d415724b904",
         "isEditing": false,
         "item": "Should not be able to indent more than one level below parent",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 80
+        "sortOrder": 47.75
       }, {
-        "_id": "cd648315-bcae-4cd4-8f01-8f3886fe2271",
+        "isEditing": false,
+        "item": "Children should move with parent",
+        "indent": 1,
+        "archived": false,
+        "list": "Sample",
+        "sortOrder": 48,
+        "_id": "2a96fa17-36ca-4536-88ce-94e763d64933"
+      }, {
+        "isEditing": false,
+        "item": "Children should archive/delete with parent",
+        "indent": 1,
+        "archived": false,
+        "list": "Sample",
+        "sortOrder": 64,
+        "_id": "fef1e673-5369-45c0-bdf7-833134c3a337"
+      }, {
+        "isEditing": false,
+        "item": "Children should indent/outdent with parent",
+        "indent": 1,
+        "archived": false,
+        "list": "Sample",
+        "sortOrder": 72,
+        "_id": "d0d06cac-382a-48cb-83b0-65d7dd0bbd9e"
+      }, {
+        "_id": "3625d6c1-d406-4793-8886-b0294e455ff8",
+        "isEditing": false,
+        "item": "Ability to insert an item anywhere in the list",
+        "indent": 1,
+        "archived": false,
+        "list": "Sample",
+        "sortOrder": 92
+      }, {
         "isEditing": false,
         "item": "Backlog",
         "indent": 0,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 104
+        "sortOrder": 104,
+        "_id": "5ffcf743-8940-4321-8029-b6b1bbf2be31"
       }, {
-        "_id": "4d806c2d-7229-45a5-870f-147b96be2a80",
         "isEditing": false,
         "item": "Ability to password protect a list",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 112
+        "sortOrder": 112,
+        "_id": "d0524a04-b728-4f6f-9e45-6443849e44d0"
       }, {
-        "_id": "3a03c271-8510-4eb3-8a20-b9695bcd7673",
         "isEditing": false,
         "item": "Ability to add a checkbox column, parent indicates number of checked children",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 120
+        "sortOrder": 120,
+        "_id": "54d8b5c8-d337-40be-aea1-1c71bde1b570"
       }, {
-        "_id": "28445766-f0dd-47a0-8dd0-7bc76808d813",
         "isEditing": false,
         "item": "Ability to add a numeric column, parent shows sum of children",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 128
+        "sortOrder": 128,
+        "_id": "1195ca4b-04d7-4e4f-8aa3-ab46ae8f2f90"
       }, {
-        "_id": "67a97434-3cc5-4bea-8a0d-781d2b2d0723",
         "isEditing": false,
         "item": "Textarea instead of single line textbox. Should grow instead of scroll and allow line breaks",
         "indent": 1,
         "archived": false,
         "list": "Sample",
-        "sortOrder": 136
+        "sortOrder": 136,
+        "_id": "a12fc44f-077e-421d-82f7-c183038f98b8"
       }
     ];
     for (_i = 0, _len = samples.length; _i < _len; _i++) {
