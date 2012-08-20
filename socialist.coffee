@@ -140,6 +140,15 @@ if Meteor.is_client
     @newList = ->
       Session.set 'listName', ''
       return true
+    @delArchived = ->
+      Items.remove 
+        list: @listName()
+        archived: true
+    @archiveAll = =>
+      Items.update { list: @listName() }, 
+        $set: archived: true
+      , false
+      , true
     return
 
   canonicalListName = (name) ->

@@ -365,6 +365,21 @@
         Session.set('listName', '');
         return true;
       };
+      this.delArchived = function() {
+        return Items.remove({
+          list: this.listName(),
+          archived: true
+        });
+      };
+      this.archiveAll = function() {
+        return Items.update({
+          list: _this.listName()
+        }, {
+          $set: {
+            archived: true
+          }
+        }, false, true);
+      };
     };
     canonicalListName = function(name) {
       return name.replace(/[^A-z0-9\s]*/g, '').replace(/\s+/g, '-');
