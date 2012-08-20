@@ -44,6 +44,7 @@ if Meteor.is_client
 
         return observable
 
+  # The empty row at the bottom of the list for inserting new items
   blankItem = ->
     @item = ko.observable('')
     @indent = ko.observable(0)
@@ -62,8 +63,13 @@ if Meteor.is_client
       @indent(@indent() - 1) if @indent() > 0
     return
 
+  # The form to create a new list
   newListModel = (parent) ->
     @name = ko.observable ''
+    @saveOnEnter = (model, event) =>
+      return true unless event.which is 13
+      model.save()
+      return false
     @save = =>
       Session.set 'listName', canonicalListName @name()
       window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(@name())
@@ -153,7 +159,7 @@ if Meteor.is_client
     return
 
   canonicalListName = (name) ->
-    name.replace(/[^A-z0-9\s]*/g,'').replace(/\s+/g, '-')
+    name.replace(/[^-A-z0-9\s]*/g,'').replace(/\s+/g, '-')
 
   Session.set 'listName', window.location.hash.replace('#!', '') or ''
 

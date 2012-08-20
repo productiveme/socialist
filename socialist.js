@@ -266,6 +266,13 @@
     newListModel = function(parent) {
       var _this = this;
       this.name = ko.observable('');
+      this.saveOnEnter = function(model, event) {
+        if (event.which !== 13) {
+          return true;
+        }
+        model.save();
+        return false;
+      };
       this.save = function() {
         Session.set('listName', canonicalListName(_this.name()));
         window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(_this.name());
@@ -403,7 +410,7 @@
       };
     };
     canonicalListName = function(name) {
-      return name.replace(/[^A-z0-9\s]*/g, '').replace(/\s+/g, '-');
+      return name.replace(/[^-A-z0-9\s]*/g, '').replace(/\s+/g, '-');
     };
     Session.set('listName', window.location.hash.replace('#!', '') || '');
     vm = new viewModel();

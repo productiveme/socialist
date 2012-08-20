@@ -36,7 +36,7 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="#">Socialist</a>
+        <a class="brand" href="/" data-bind="click: newList">Socialist</a>
         <ul class="nav">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
@@ -66,7 +66,7 @@
         <div class="control-group">
           <label class="control-label" for="listName">List name</label>
           <div class="controls">
-            <input type="text" class="input-xlarge" id="listName" data-bind="value: name">
+            <input type="text" class="input-xlarge" id="listName" data-bind="value: name, event: { keyup: saveOnEnter }">
             <p class="help-block">E.g. Shopping List</p>
           </div>
         </div>
