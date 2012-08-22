@@ -7,19 +7,36 @@
   samples = (typeof exports !== "undefined" && exports !== null ? exports : this).samples || [];
 
   reset_data = function() {
-    var sample, _i, _len;
+    var a, newid, s, sample, _i, _j, _len, _len1;
     Items.remove({
       list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Sample'
     });
     for (_i = 0, _len = samples.length; _i < _len; _i++) {
       sample = samples[_i];
-      Items.insert({
+      newid = Items.insert({
         item: sample.item,
-        indent: sample.indent,
         archived: sample.archived,
         list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Sample',
-        sortOrder: _i * 8
+        sortOrder: _i,
+        parent: sample.parent,
+        ancestors: sample.ancestors
       });
+      for (_j = 0, _len1 = samples.length; _j < _len1; _j++) {
+        s = samples[_j];
+        if (s.parent) {
+          s.parent = s.parent.replace(sample._id, newid);
+        }
+        s.ancestors = (function() {
+          var _k, _len2, _ref, _results;
+          _ref = s.ancestors;
+          _results = [];
+          for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
+            a = _ref[_k];
+            _results.push(a.replace(sample._id, newid));
+          }
+          return _results;
+        })();
+      }
     }
   };
 
@@ -27,128 +44,73 @@
     itemMapping = {
       item: {
         create: function(options) {
-          var observable, parent;
-          parent = options.parent;
+          var itemObject, observable;
+          itemObject = options.parent;
           observable = ko.observable(options.data);
-          parent.isEditing = ko.observable(false);
-          parent.isMoving = ko.observable(false);
-          parent.modeTemplate = function() {
-            if (parent.isEditing()) {
+          itemObject.isEditing = ko.observable(false);
+          itemObject.isMoving = ko.observable(false);
+          itemObject.indent = ko.computed(function() {
+            if (this.ancestors) {
+              return this.ancestors().length;
+            } else {
+              return 0;
+            }
+          }, itemObject);
+          itemObject.modeTemplate = function() {
+            if (itemObject.isEditing()) {
               return 'itemEditing';
             } else {
               return 'item';
             }
           };
-          parent.setEditing = function() {
-            return parent.isEditing(true);
+          itemObject.setEditing = function() {
+            return itemObject.isEditing(true);
           };
-          parent.clearEditing = function() {
-            return parent.isEditing(false);
+          itemObject.clearEditing = function() {
+            return itemObject.isEditing(false);
           };
-          parent.doIndent = function() {
-            var itm, maxIndent, pi, pos, _i, _len, _ref, _results;
-            maxIndent = 0;
-            pos = vm.vm().items().indexOf(parent);
-            if (pos > 0) {
-              maxIndent = vm.vm().items()[pos - 1].indent() + 1;
-            }
-            if (parent.indent() < maxIndent) {
-              pi = parent.indent();
-              Items.update(parent._id(), {
-                $inc: {
-                  indent: 1
-                }
-              });
-              _ref = vm.vm().items.slice(pos + 1);
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                itm = _ref[_i];
-                if (itm.indent() <= pi) {
-                  break;
-                }
-                _results.push(Items.update(itm._id(), {
-                  $inc: {
-                    indent: 1
-                  }
-                }));
+          itemObject.doIndent = function() {
+            var ancestors, items, itm, pos, _i, _len;
+            pos = vm.vm().items.indexOf(itemObject);
+            items = vm.vm().items.slice(0, (pos - 1) + 1 || 9e9).reverse();
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              itm = items[_i];
+              if (itm._id() === itemObject.parent()) {
+                break;
               }
-              return _results;
-            }
-          };
-          parent.doOutdent = function() {
-            var itm, pi, pos, _i, _len, _ref, _results;
-            if (parent.indent() > 0) {
-              pos = vm.vm().items().indexOf(parent);
-              pi = parent.indent();
-              Items.update(parent._id(), {
-                $inc: {
-                  indent: -1
-                }
-              });
-              _ref = vm.vm().items.slice(pos + 1);
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                itm = _ref[_i];
-                if (itm.indent() <= pi) {
-                  break;
-                }
-                _results.push(Items.update(itm._id(), {
-                  $inc: {
-                    indent: -1
+              if (itm.parent() === itemObject.parent()) {
+                ancestors = itm.ancestors();
+                ancestors.push(itm._id());
+                Items.update(itemObject._id(), {
+                  $set: {
+                    parent: itm._id(),
+                    ancestors: ancestors
                   }
-                }));
+                });
+                break;
               }
-              return _results;
             }
           };
-          parent.save = function() {
-            parent.isEditing(false);
-            return Items.update(parent._id(), {
+          itemObject.doOutdent = function() {
+            var parent;
+            parent = Items.findOne(itemObject.parent());
+            return Items.update(itemObject._id(), {
               $set: {
-                item: parent.item(),
-                indent: parent.indent(),
+                parent: parent != null ? parent.parent : void 0,
+                ancestors: parent != null ? parent.ancestors : void 0
+              }
+            });
+          };
+          itemObject.save = function() {
+            itemObject.isEditing(false);
+            return Items.update(itemObject._id(), {
+              $set: {
+                item: itemObject.item(),
                 archived: false
               }
             });
           };
-          parent.remove = function() {
-            var itm, pi, pos, _i, _j, _len, _len1, _ref, _ref1, _results, _results1;
-            pos = vm.vm().items().indexOf(parent);
-            pi = parent.indent();
-            if (parent.archived()) {
-              Items.remove(parent._id());
-              _ref = vm.vm().items.slice(pos + 1);
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                itm = _ref[_i];
-                if (itm.indent() <= pi) {
-                  break;
-                }
-                _results.push(Items.remove(itm._id()));
-              }
-              return _results;
-            } else {
-              Items.update(parent._id(), {
-                $set: {
-                  archived: true
-                }
-              });
-              _ref1 = vm.vm().items.slice(pos + 1);
-              _results1 = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                itm = _ref1[_j];
-                if (itm.indent() <= pi) {
-                  break;
-                }
-                _results1.push(Items.update(itm._id(), {
-                  $set: {
-                    archived: true
-                  }
-                }));
-              }
-              return _results1;
-            }
-          };
+          itemObject.remove = function() {};
           return observable;
         }
       }
@@ -329,10 +291,7 @@
         if (_this.vm().items) {
           _this.json(ko.mapping.toJSON(_this.vm().items));
         }
-        _this.showingJSON(true);
-        return setTimeout(function() {
-          return _this.showingJSON(false);
-        }, 10000);
+        return _this.showingJSON(true);
       };
       this.newList = function() {
         Session.set('listName', '');

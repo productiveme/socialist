@@ -5,14 +5,23 @@ samples = (exports ? this).samples or []
 reset_data = -> # Executes on both client and server.
   Items.remove {list: vm.listName?() or 'Sample'}
   for sample in samples
-    Items.insert
+
+    newid = Items.insert
       item: sample.item
-      indent: sample.indent
+      # indent: sample.ancestors.length
       archived: sample.archived
       list: vm.listName?() or 'Sample'
-      sortOrder: _i * 8
-      #sortOrder: sample.sortOrder
-  return
+      sortOrder: _i
+      parent: sample.parent
+      ancestors: sample.ancestors
+    
+    # Correct the ids with the newly created ones
+    for s in samples
+      s.parent = s.parent.replace sample._id, newid if s.parent
+      s.ancestors = for a in s.ancestors 
+        a.replace sample._id, newid
+
+  return # nothing
 
 
 if Meteor.is_client
@@ -21,58 +30,86 @@ if Meteor.is_client
     item:
       # item observable is created
       create: (options) ->
-        parent = options.parent
+        itemObject = options.parent
         observable = ko.observable(options.data)
-        parent.isEditing = ko.observable(false)
-        parent.isMoving = ko.observable(false)
-        parent.modeTemplate = -> 
-          if parent.isEditing() then 'itemEditing' else 'item'
-        parent.setEditing = -> parent.isEditing(true)
-        parent.clearEditing = -> parent.isEditing(false)
-        parent.doIndent = -> 
-          maxIndent = 0
-          pos = vm.vm().items().indexOf(parent) # current position in items
-          maxIndent = vm.vm().items()[pos-1].indent() + 1 if pos > 0 # indent of previous item
-          if parent.indent() < maxIndent
-            pi = parent.indent()
-            Items.update parent._id(),
-              $inc: indent: 1
-            for itm in vm.vm().items[pos+1..]
-              break if itm.indent() <= pi
-              Items.update itm._id(),
-                $inc: indent: 1
-        parent.doOutdent = -> 
-          if parent.indent() > 0
-            pos = vm.vm().items().indexOf(parent) # current position in items
-            pi = parent.indent()
-            Items.update parent._id(), 
-              $inc: indent: -1
-            for itm in vm.vm().items[pos+1..]
-              break if itm.indent() <= pi
-              Items.update itm._id(),
-                $inc: indent: -1
-        parent.save = -> 
-          parent.isEditing(false)
-          Items.update parent._id(),
+        itemObject.isEditing = ko.observable(false)
+        itemObject.isMoving = ko.observable(false)
+        #indent2 = ko.observable(itemObject.ancestors?().length)
+        itemObject.indent = ko.computed -> 
+          if @ancestors then @ancestors().length else 0
+        , itemObject
+        itemObject.modeTemplate = -> 
+          if itemObject.isEditing() then 'itemEditing' else 'item'
+        itemObject.setEditing = -> itemObject.isEditing(true)
+        itemObject.clearEditing = -> itemObject.isEditing(false)
+        itemObject.doIndent = ->
+          pos = vm.vm().items.indexOf(itemObject)
+          items = vm.vm().items[..pos-1].reverse()
+          for itm in items # walk up the list to find first sibling
+            if itm._id() is itemObject.parent() # parent found before sibling, cannot indent
+              break;
+            if itm.parent() is itemObject.parent()
+              ancestors = itm.ancestors()
+              ancestors.push itm._id()
+              Items.update itemObject._id(),
+                $set:
+                  parent: itm._id()
+                  ancestors: ancestors
+              break
+          return
+
+          # maxIndent = 0
+          # pos = vm.vm().items().indexOf(itemObject) # current position in items
+          # maxIndent = vm.vm().items()[pos-1].indent() + 1 if pos > 0 # indent of previous item
+          # if itemObject.indent() < maxIndent
+          #   pi = itemObject.indent()
+          #   Items.update itemObject._id(),
+          #     $inc: indent: 1
+          #   for itm in vm.vm().items[pos+1..]
+          #     break if itm.indent() <= pi
+          #     Items.update itm._id(),
+          #       $inc: indent: 1
+        itemObject.doOutdent = -> 
+          parent = Items.findOne itemObject.parent() # become sibling of parent
+          Items.update itemObject._id(),
             $set: 
-              item: parent.item()
-              indent: parent.indent()
+              parent: parent?.parent
+              ancestors: parent?.ancestors
+          # if itemObject.indent() > 0
+          #   pos = vm.vm().items().indexOf(itemObject) # current position in items
+          #   pi = itemObject.indent()
+          #   Items.update itemObject._id(), 
+          #     $inc: indent: -1
+          #   for itm in vm.vm().items[pos+1..]
+          #     break if itm.indent() <= pi
+          #     Items.update itm._id(),
+          #       $inc: indent: -1
+        itemObject.save = -> 
+          itemObject.isEditing(false)
+          Items.update itemObject._id(),
+            $set: 
+              item: itemObject.item()
+              # indent: itemObject.indent()
               archived: false
-        parent.remove = -> 
-          pos = vm.vm().items().indexOf(parent) # current position in items
-          pi = parent.indent()
-          if parent.archived()
-            Items.remove parent._id()
-            for itm in vm.vm().items[pos+1..]
-              break if itm.indent() <= pi
-              Items.remove itm._id()
-          else
-            Items.update parent._id(), 
-              $set: archived: true
-            for itm in vm.vm().items[pos+1..]
-              break if itm.indent() <= pi
-              Items.update itm._id(), 
-              $set: archived: true
+        itemObject.remove = -> 
+
+          # archive/remove all items having this one as an ancestor
+          # archive/remove this item
+
+          # pos = vm.vm().items().indexOf(itemObject) # current position in items
+          # pi = itemObject.indent()
+          # if itemObject.archived()
+          #   Items.remove itemObject._id()
+          #   for itm in vm.vm().items[pos+1..]
+          #     break if itm.indent() <= pi
+          #     Items.remove itm._id()
+          # else
+          #   Items.update itemObject._id(), 
+          #     $set: archived: true
+          #   for itm in vm.vm().items[pos+1..]
+          #     break if itm.indent() <= pi
+          #     Items.update itm._id(), 
+          #     $set: archived: true
 
         return observable
 
@@ -189,9 +226,9 @@ if Meteor.is_client
     @showJSON = =>
       if @vm().items then @json ko.mapping.toJSON(@vm().items)
       @showingJSON true
-      setTimeout => 
-        @showingJSON false
-      , 10000
+      #setTimeout => 
+      #  @showingJSON false
+      #, 30000
     @newList = ->
       Session.set 'listName', ''
       return true
