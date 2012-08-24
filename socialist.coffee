@@ -118,9 +118,11 @@ if Meteor.is_client
     _this = this
     items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)   
     isMoving = ko.observable false
-    # itemsToMove = []
+
     itemsToMoveIndex = ko.observable()
     itemsToMoveCount = ko.observable()
+
+    actionSets = ko.observableArray ['archiveRemove', 'indentOutdent']
 
     createNewItem = ->
       newid = Items.insert 
@@ -253,6 +255,12 @@ if Meteor.is_client
         prevItem = itm
 
       return
+
+    rotateActionSets = ->
+      actionSets.push actionSets.shift()
+
+    actionSetTemplate = ko.computed ->
+      actionSets()[0] + 'Template'
       
     return {
       items: items
@@ -262,6 +270,8 @@ if Meteor.is_client
       moveItem : moveItem
       isMoving: isMoving
       moveHere: moveHere
+      actionSetTemplate: actionSetTemplate
+      rotateActionSets: rotateActionSets
     }
 
   viewModel = ->

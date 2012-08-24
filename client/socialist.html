@@ -82,7 +82,7 @@
 <script type="text/html" id="socialist">
     <table class="table table-striped" data-bind="visible: !$root.showingJSON()">
       <thead>
-        <tr><th class="bullet"></th><th>Item</th><th class="icons"></th></tr>
+        <tr><th class="bullet"></th><th>Item</th><th class="icons" style="text-align:center"><button class="btn" data-bind="click: $root.vm().rotateActionSets"><i class="icon-refresh"></i></button></th></tr>
       </thead>
       <tbody data-bind="foreach: items">
         <tr data-bind="template: 'itemEditing', css: { 'archived' : archived }"> 
@@ -114,9 +114,14 @@
       </div>
     </div>
   </td>
-  <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="visible: archived, click: unarchive"><i class="icon-ok-sign"></i></button><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-minus-sign' : !archived(), 'icon-trash' : archived }"></i></button></td>
+  <td class="icons" data-bind="css: { 'archived': archived }, template: { name: $root.vm().actionSetTemplate() }"></td>
 </script>
-
+<script type="text/html" id="archiveRemoveTemplate">
+  <button class="btn" data-bind="visible: archived, click: unarchive"><i class="icon-ok-sign"></i></button><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-minus-sign' : !archived(), 'icon-trash' : archived }"></i></button>
+</script>
+<script type="text/html" id="indentOutdentTemplate">
+  <button class="btn" data-bind="click: doOutdent"><i class="icon-indent-right"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-indent-left"></i></button>
+</script>
 </body>
 
 

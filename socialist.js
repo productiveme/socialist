@@ -168,7 +168,7 @@
       };
     };
     listModel = function(parent) {
-      var checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, saveOnEnter, _this;
+      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, rotateActionSets, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
@@ -180,6 +180,7 @@
       isMoving = ko.observable(false);
       itemsToMoveIndex = ko.observable();
       itemsToMoveCount = ko.observable();
+      actionSets = ko.observableArray(['archiveRemove', 'indentOutdent']);
       createNewItem = function() {
         var newid;
         newid = Items.insert({
@@ -353,6 +354,12 @@
           prevItem = itm;
         }
       };
+      rotateActionSets = function() {
+        return actionSets.push(actionSets.shift());
+      };
+      actionSetTemplate = ko.computed(function() {
+        return actionSets()[0] + 'Template';
+      });
       return {
         items: items,
         createNewItem: createNewItem,
@@ -360,7 +367,9 @@
         saveOnEnter: saveOnEnter,
         moveItem: moveItem,
         isMoving: isMoving,
-        moveHere: moveHere
+        moveHere: moveHere,
+        actionSetTemplate: actionSetTemplate,
+        rotateActionSets: rotateActionSets
       };
     };
     viewModel = function() {
