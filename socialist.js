@@ -7,12 +7,12 @@
   samples = (typeof exports !== "undefined" && exports !== null ? exports : this).samples || [];
 
   reset_data = function() {
-    var a, newid, s, sample, _i, _j, _len, _len1;
+    var a, i, newid, s, sample, _i, _j, _len, _len1, _ref;
     Items.remove({
       list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Sample'
     });
-    for (_i = 0, _len = samples.length; _i < _len; _i++) {
-      sample = samples[_i];
+    for (i = _i = 0, _len = samples.length; _i < _len; i = ++_i) {
+      sample = samples[i];
       newid = Items.insert({
         item: sample.item,
         archived: sample.archived,
@@ -21,17 +21,18 @@
         parent: sample.parent,
         ancestors: sample.ancestors
       });
-      for (_j = 0, _len1 = samples.length; _j < _len1; _j++) {
-        s = samples[_j];
+      _ref = samples.slice(i + 1);
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        s = _ref[_j];
         if (s.parent) {
           s.parent = s.parent.replace(sample._id, newid);
         }
         s.ancestors = (function() {
-          var _k, _len2, _ref, _results;
-          _ref = s.ancestors;
+          var _k, _len2, _ref1, _results;
+          _ref1 = s.ancestors;
           _results = [];
-          for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
-            a = _ref[_k];
+          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+            a = _ref1[_k];
             _results.push(a.replace(sample._id, newid));
           }
           return _results;
@@ -65,7 +66,7 @@
                 break;
               }
               if (itm.parent() === itemObject.parent()) {
-                ancestors = itm.ancestors();
+                ancestors = itm.ancestors().slice(0);
                 ancestors.push(itm._id());
                 Items.update(itemObject._id(), {
                   $set: {
@@ -79,6 +80,8 @@
                   $push: {
                     ancestors: itm._id()
                   }
+                }, {
+                  multi: true
                 });
                 break;
               }
@@ -99,6 +102,8 @@
               $pull: {
                 ancestors: parent != null ? parent._id : void 0
               }
+            }, {
+              multi: true
             });
           };
           itemObject.save = function() {
@@ -160,6 +165,10 @@
         }
         model.save();
         return false;
+      };
+      this.goShopping = function() {
+        window.location.href = 'http://' + window.location.host + '/#!Shopping-List';
+        window.location.reload();
       };
       this.save = function() {
         Session.set('listName', canonicalListName(_this.name()));

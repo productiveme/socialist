@@ -3,65 +3,71 @@
 
   (typeof exports !== "undefined" && exports !== null ? exports : this).samples = [
     {
+      "_id": "5c1dab6b-af33-447e-84af-23830228083c",
       "isMoving": false,
       "indent": 0,
-      "item": "Shopping List",
+      "canMoveHere": false,
+      "item": "Shopping",
       "archived": false,
+      "list": "Shopping-List",
       "sortOrder": 0,
-      "list": "Test",
       "parent": "",
-      "ancestors": [],
-      "_id": "4bb6cafa-a535-459b-8fc6-d407957866fe"
+      "ancestors": []
     }, {
+      "_id": "6445815e-d043-497d-83d1-2723b1065b7c",
       "isMoving": false,
       "indent": 1,
+      "canMoveHere": false,
       "item": "Groceries",
       "archived": false,
+      "list": "Shopping-List",
       "sortOrder": 1,
-      "list": "Test",
-      "parent": "4bb6cafa-a535-459b-8fc6-d407957866fe",
-      "ancestors": ["4bb6cafa-a535-459b-8fc6-d407957866fe"],
-      "_id": "8e741766-80e3-4cb0-8f03-64c59cfe21fa"
+      "parent": "5c1dab6b-af33-447e-84af-23830228083c",
+      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c"]
     }, {
+      "_id": "ebcaebc1-aeed-4219-8a7a-b64e94bc073e",
       "isMoving": false,
       "indent": 2,
+      "canMoveHere": false,
       "item": "Milk",
       "archived": false,
+      "list": "Shopping-List",
       "sortOrder": 2,
-      "list": "Test",
-      "parent": "8e741766-80e3-4cb0-8f03-64c59cfe21fa",
-      "ancestors": ["4bb6cafa-a535-459b-8fc6-d407957866fe", "8e741766-80e3-4cb0-8f03-64c59cfe21fa"],
-      "_id": "a08b292d-21a6-48a5-ab1c-55fd0793e0f5"
+      "parent": "6445815e-d043-497d-83d1-2723b1065b7c",
+      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "6445815e-d043-497d-83d1-2723b1065b7c"]
     }, {
+      "_id": "bc44c337-2bc4-4510-80bc-3abe689ee5c9",
+      "isMoving": false,
+      "indent": 2,
+      "canMoveHere": false,
+      "item": "Bread",
+      "archived": false,
+      "list": "Shopping-List",
+      "sortOrder": 3,
+      "parent": "6445815e-d043-497d-83d1-2723b1065b7c",
+      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "6445815e-d043-497d-83d1-2723b1065b7c"]
+    }, {
+      "_id": "9e8ab162-03bf-4e3e-99b6-6f523c34b96b",
       "isMoving": false,
       "indent": 1,
+      "canMoveHere": false,
       "item": "Household",
       "archived": false,
-      "sortOrder": 3,
-      "list": "Test",
-      "parent": "4bb6cafa-a535-459b-8fc6-d407957866fe",
-      "ancestors": ["4bb6cafa-a535-459b-8fc6-d407957866fe"],
-      "_id": "cf682a84-d3db-4956-8f8c-33c3fc9f05ed"
-    }, {
-      "isMoving": false,
-      "indent": 2,
-      "item": "Light bulbs",
-      "archived": false,
+      "list": "Shopping-List",
       "sortOrder": 4,
-      "list": "Test",
-      "parent": "cf682a84-d3db-4956-8f8c-33c3fc9f05ed",
-      "ancestors": ["4bb6cafa-a535-459b-8fc6-d407957866fe", "cf682a84-d3db-4956-8f8c-33c3fc9f05ed"],
-      "_id": "761312d1-daf4-4578-8dff-b89a2eb5e8e0"
+      "parent": "5c1dab6b-af33-447e-84af-23830228083c",
+      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c"]
     }, {
+      "_id": "554a93f6-1047-43c9-9765-5d9e3a08c268",
       "isMoving": false,
       "indent": 2,
-      "item": "Dishwasher liquid",
+      "canMoveHere": false,
+      "item": "Soap",
       "archived": false,
+      "list": "Shopping-List",
       "sortOrder": 5,
-      "list": "Test",
-      "parent": "cf682a84-d3db-4956-8f8c-33c3fc9f05ed",
-      "ancestors": ["4bb6cafa-a535-459b-8fc6-d407957866fe", "cf682a84-d3db-4956-8f8c-33c3fc9f05ed"],
-      "_id": "a0d8456d-d560-45c0-857c-4c732a5dd3f7"
+      "parent": "9e8ab162-03bf-4e3e-99b6-6f523c34b96b",
+      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "9e8ab162-03bf-4e3e-99b6-6f523c34b96b"]
     }
   ];
 

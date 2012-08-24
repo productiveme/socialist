@@ -4,7 +4,7 @@ samples = (exports ? this).samples or [] # from the global scope on either serve
 
 reset_data = -> # Executes on both client and server.
   Items.remove {list: vm.listName?() or 'Sample'}
-  for sample in samples
+  for sample,i in samples
 
     newid = Items.insert
       item: sample.item
@@ -15,7 +15,7 @@ reset_data = -> # Executes on both client and server.
       ancestors: sample.ancestors
     
     # Correct the ids with the newly created ones
-    for s in samples
+    for s in samples[i+1..]
       s.parent = s.parent.replace sample._id, newid if s.parent
       s.ancestors = for a in s.ancestors 
         a.replace sample._id, newid
@@ -46,7 +46,7 @@ if Meteor.is_client
               break;
             if itm.parent() is itemObject.parent()
               # first older sibling becomes my parent
-              ancestors = itm.ancestors()
+              ancestors = itm.ancestors()[..]
               ancestors.push itm._id()
               Items.update itemObject._id(),
                 $set:
@@ -54,9 +54,9 @@ if Meteor.is_client
                   ancestors: ancestors
 
               # my children to receive a new ancestor
-              Items.update 
-                ancestors: itemObject._id()
-              , $push: ancestors: itm._id()
+              Items.update { ancestors: itemObject._id() },
+                { $push: ancestors: itm._id() },
+                { multi: true }
               break
 
           return
@@ -69,9 +69,9 @@ if Meteor.is_client
               parent: parent?.parent
               ancestors: parent?.ancestors
           # Remove my old parent from my children's ancestors
-          Items.update
-            ancestors: itemObject._id()
-          , $pull: ancestors: parent?._id
+          Items.update { ancestors: itemObject._id() },
+            { $pull: ancestors: parent?._id },
+            { multi: true }
 
         itemObject.save = -> 
           Items.update itemObject._id(),
@@ -107,6 +107,10 @@ if Meteor.is_client
       return true unless event.which is 13
       model.save()
       return false
+    @goShopping = =>
+      window.location.href = 'http://' + window.location.host + '/#!Shopping-List'
+      window.location.reload()
+      return
     @save = =>
       Session.set 'listName', canonicalListName @name()
       window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(@name())
