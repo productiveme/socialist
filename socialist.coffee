@@ -35,6 +35,9 @@ if Meteor.is_client
         itemObject.indent = ko.computed -> 
           return @ancestors?().length ? 0
         , itemObject
+        itemObject.canMoveHere = ko.computed ->
+          return vm.vm().isMoving() and not @isMoving()
+        , itemObject
         itemObject.doIndent = ->
           pos = vm.vm().items.indexOf(itemObject)
           itemsUpward = vm.vm().items[..pos-1].reverse()
@@ -77,6 +80,13 @@ if Meteor.is_client
               item: itemObject.item()
               # indent: itemObject.indent()
               # archived: false
+
+        itemObject.unarchive = ->
+          Items.update { ancestors: itemObject._id() }, 
+              { $set: archived: false },
+              { multi: true }
+            Items.update itemObject._id(),
+              $set: archived: false
 
         itemObject.remove = ->           
           if itemObject.archived() # remove item and children
@@ -201,35 +211,43 @@ if Meteor.is_client
       return false
 
     moveItem = (data) ->
-      # pos = items.indexOf(data)
-      # itemsToMove = []
-      # itemsToMove.push(data)
-      # data.isMoving true
-      # for itm in items[pos+1..]
-      #   break if itm.indent() <= data.indent()
-      #   itemsToMove.push itm
-      #   itm.isMoving true
-      # isMoving true
-      return true
+      pos = items.indexOf(data)
+      itemsToMove = []
+      itemsToMove.push(data)
+      data.isMoving true
+      for itm in items[pos+1..]
+        break if itm.indent() <= data.indent()
+        itemsToMove.push itm
+        itm.isMoving true
+      isMoving true
+      # return true
 
     moveHere = (data) ->
       # for itm in items()[items.indexOf(data) + 1..]
       #   if not itm.isMoving()
       #     nextItem = itm
       #     break
-      # sortIncrement = 8
-      # indentIncrement = if data.indent() < itemsToMove[0].indent() - 1 then data.indent() - itemsToMove[0].indent() + 1 else 0
+      # sortIncrement = 1
+      # # indentIncrement = if data.indent() < itemsToMove[0].indent() - 1 then data.indent() - itemsToMove[0].indent() + 1 else 0
       # try
-      #   sortIncrement = (nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1)
-      # for itm, i in itemsToMove
-      #   newSortOrder = data.sortOrder() + (sortIncrement * (i+1))
-      #   Items.update itm._id(),
-      #     $set: sortOrder: newSortOrder
-      #     $inc: indent: indentIncrement
-      #   itm.isMoving false
+      #   sortIncrement = -1 * (itemsToMove[0].sortOrder() - ((nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1)))
+      # 
+      # Items.update { $in: _id: itemsToMove},
+      #   { $push: ancestors: data._id 
+      #     $set: sortOrder: data.sortOrder()
+      #   },
+      #   { multi: true }
+      # Items.update itemsToMove[0],
+      #   $set: parent: data._id
+      # # for itm, i in itemsToMove
+      #   # newSortOrder = data.sortOrder() + (sortIncrement * (i+1))
+      #   # Items.update itm._id(),
+      #     # $set: 
+      #       # sortOrder: newSortOrder
+      #   # itm.isMoving false
       # itemsToMove = []
       # isMoving false
-      return true
+      # return true
 
     return {
       items: items

@@ -52,6 +52,9 @@
             var _ref;
             return (_ref = typeof this.ancestors === "function" ? this.ancestors().length : void 0) != null ? _ref : 0;
           }, itemObject);
+          itemObject.canMoveHere = ko.computed(function() {
+            return vm.vm().isMoving() && !this.isMoving();
+          }, itemObject);
           itemObject.doIndent = function() {
             var ancestors, itemsUpward, itm, pos, _i, _len;
             pos = vm.vm().items.indexOf(itemObject);
@@ -102,6 +105,22 @@
             return Items.update(itemObject._id(), {
               $set: {
                 item: itemObject.item()
+              }
+            });
+          };
+          itemObject.unarchive = function() {
+            Items.update({
+              ancestors: itemObject._id()
+            }, {
+              $set: {
+                archived: false
+              }
+            }, {
+              multi: true
+            });
+            return Items.update(itemObject._id(), {
+              $set: {
+                archived: false
               }
             });
           };
@@ -273,11 +292,23 @@
         return false;
       };
       moveItem = function(data) {
-        return true;
+        var itm, pos, _i, _len, _ref;
+        pos = items.indexOf(data);
+        itemsToMove = [];
+        itemsToMove.push(data);
+        data.isMoving(true);
+        _ref = items.slice(pos + 1);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          itm = _ref[_i];
+          if (itm.indent() <= data.indent()) {
+            break;
+          }
+          itemsToMove.push(itm);
+          itm.isMoving(true);
+        }
+        return isMoving(true);
       };
-      moveHere = function(data) {
-        return true;
-      };
+      moveHere = function(data) {};
       return {
         items: items,
         createNewItem: createNewItem,

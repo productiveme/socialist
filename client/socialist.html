@@ -106,7 +106,7 @@
   <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-ban-circle' : !archived(), 'icon-trash' : archived }"></i></button></td>
 </script>
 <script type="text/html" id="itemEditing">
-  <td class="bullet"><i class="move icon-move" data-bind="click: $root.vm().moveItem, visible: !$root.vm().isMoving()"></i><i class="move icon-arrow-down" data-bind="click: $root.vm().moveHere, visible: $root.vm().isMoving()"></i></td>
+  <td class="bullet"><i class="move icon-move" data-bind="click: $root.vm().moveItem, visible: !$root.vm().isMoving()"></i><i class="move icon-arrow-down" data-bind="click: $root.vm().moveHere, visible: canMoveHere"></i></td>
   <td data-bind="attr: { 'class': _id }">
     <div data-bind="css: {'itemEditing': true, 'moving': isMoving }">
       <div data-bind="attr: {'class' : 'indent' + indent() }">
@@ -114,7 +114,7 @@
       </div>
     </div>
   </td>
-  <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-ban-circle' : !archived(), 'icon-trash' : archived }"></i></button></td>
+  <td class="icons" data-bind="css: { 'archived': archived }"><button class="btn" data-bind="visible: archived, click: unarchive"><i class="icon-ok-sign"></i></button><button class="btn" data-bind="click: remove"><i data-bind="css: { 'icon-minus-sign' : !archived(), 'icon-trash' : archived }"></i></button></td>
 </script>
 
 </body>
