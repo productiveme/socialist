@@ -226,13 +226,15 @@ if Meteor.is_client
       # root item to move should become sibling of selected item
       rootItemToMove = cutItems[0]
       rootItemOldIndent = rootItemToMove.indent()
-      rootItemToMove.parent data.parent()
-      rootItemToMove.ancestors data.ancestors()
+      
+      rootItemToMove.ancestors data.ancestors()[..] # copy target's ancestors
+      rootItemToMove.ancestors.push data._id()      # and add target as the final ancestor
+      rootItemToMove.parent data.parent()           # and parent
 
-      # root item's children should get new ancestory
+      # root item's children should get new ancestry
       for itm in cutItems[1..]
-        itm.ancestors.splice 0, rootItemOldIndent
-        itm.ancestors.unshift(id) for id in rootItemToMove.ancestors[..].reverse()
+        itm.ancestors.splice 0, rootItemOldIndent                                   # throw away old ancestry
+        itm.ancestors.unshift(id) for id in rootItemToMove.ancestors[..].reverse()  # and prepend parent's new ancestory
 
       pastePos = items.indexOf(data) + 1
       tail = items.splice(pastePos, 9e9)

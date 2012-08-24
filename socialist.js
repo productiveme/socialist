@@ -315,8 +315,9 @@
         cutItems = items.splice(itemsToMoveIndex(), itemsToMoveCount());
         rootItemToMove = cutItems[0];
         rootItemOldIndent = rootItemToMove.indent();
+        rootItemToMove.ancestors(data.ancestors().slice(0));
+        rootItemToMove.ancestors.push(data._id());
         rootItemToMove.parent(data.parent());
-        rootItemToMove.ancestors(data.ancestors());
         _ref = cutItems.slice(1);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           itm = _ref[_i];
