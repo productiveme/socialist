@@ -168,7 +168,7 @@
       };
     };
     listModel = function(parent) {
-      var checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMove, moveHere, moveItem, outdentOnBackspaceAndEmpty, saveOnEnter, _this;
+      var checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
@@ -178,7 +178,8 @@
         }
       }, itemMapping);
       isMoving = ko.observable(false);
-      itemsToMove = [];
+      itemsToMoveIndex = ko.observable();
+      itemsToMoveCount = ko.observable();
       createNewItem = function() {
         var newid;
         newid = Items.insert({
@@ -292,23 +293,65 @@
         return false;
       };
       moveItem = function(data) {
-        var itm, pos, _i, _len, _ref;
-        pos = items.indexOf(data);
-        itemsToMove = [];
-        itemsToMove.push(data);
+        var countOfItems, itm, pos, _i, _len, _ref;
+        itemsToMoveIndex(items.indexOf(data));
         data.isMoving(true);
+        pos = items.indexOf(data);
+        countOfItems = 1;
         _ref = items.slice(pos + 1);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           itm = _ref[_i];
           if (itm.indent() <= data.indent()) {
             break;
           }
-          itemsToMove.push(itm);
+          countOfItems++;
           itm.isMoving(true);
         }
-        return isMoving(true);
+        isMoving(true);
+        return itemsToMoveCount(countOfItems);
       };
-      moveHere = function(data) {};
+      moveHere = function(data) {
+        var cutItems, i, id, itm, pastePos, prevItem, rootItemOldIndent, rootItemToMove, tail, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+        cutItems = items.splice(itemsToMoveIndex(), itemsToMoveCount());
+        rootItemToMove = cutItems[0];
+        rootItemOldIndent = rootItemToMove.indent();
+        rootItemToMove.parent(data.parent());
+        rootItemToMove.ancestors(data.ancestors());
+        _ref = cutItems.slice(1);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          itm = _ref[_i];
+          itm.ancestors.splice(0, rootItemOldIndent);
+          _ref1 = rootItemToMove.ancestors.slice(0).reverse();
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            id = _ref1[_j];
+            itm.ancestors.unshift(id);
+          }
+        }
+        pastePos = items.indexOf(data) + 1;
+        tail = items.splice(pastePos, 9e9);
+        for (_k = 0, _len2 = cutItems.length; _k < _len2; _k++) {
+          itm = cutItems[_k];
+          items.push(itm);
+        }
+        for (_l = 0, _len3 = tail.length; _l < _len3; _l++) {
+          itm = tail[_l];
+          items.push(itm);
+        }
+        isMoving(false);
+        _ref2 = items();
+        for (i = _m = 0, _len4 = _ref2.length; _m < _len4; i = ++_m) {
+          itm = _ref2[i];
+          Items.update(itm._id(), {
+            $set: {
+              sortOrder: i,
+              parent: itm.parent(),
+              ancestors: itm.ancestors()
+            }
+          });
+          itm.isMoving(false);
+          prevItem = itm;
+        }
+      };
       return {
         items: items,
         createNewItem: createNewItem,

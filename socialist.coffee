@@ -74,19 +74,17 @@ if Meteor.is_client
           , $pull: ancestors: parent?._id
 
         itemObject.save = -> 
-          # itemObject.isEditing(false)
           Items.update itemObject._id(),
             $set: 
               item: itemObject.item()
-              # indent: itemObject.indent()
-              # archived: false
-
+              
         itemObject.unarchive = ->
+          # unarchive children as well
           Items.update { ancestors: itemObject._id() }, 
-              { $set: archived: false },
-              { multi: true }
-            Items.update itemObject._id(),
-              $set: archived: false
+            { $set: archived: false },
+            { multi: true }
+          Items.update itemObject._id(),
+            $set: archived: false
 
         itemObject.remove = ->           
           if itemObject.archived() # remove item and children
@@ -99,9 +97,6 @@ if Meteor.is_client
               { multi: true }
             Items.update itemObject._id(),
               $set: archived: true
-
-        # observable.subscribe ->
-        #   if observable() is '' and itemObject.indent() is 0 then itemObject.archived(true)
 
         return observable
 
@@ -123,7 +118,9 @@ if Meteor.is_client
     _this = this
     items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)   
     isMoving = ko.observable false
-    itemsToMove = []
+    # itemsToMove = []
+    itemsToMoveIndex = ko.observable()
+    itemsToMoveCount = ko.observable()
 
     createNewItem = ->
       newid = Items.insert 
@@ -211,44 +208,50 @@ if Meteor.is_client
       return false
 
     moveItem = (data) ->
-      pos = items.indexOf(data)
-      itemsToMove = []
-      itemsToMove.push(data)
+      itemsToMoveIndex items.indexOf(data)
       data.isMoving true
+      pos = items.indexOf(data)
+      countOfItems = 1
       for itm in items[pos+1..]
         break if itm.indent() <= data.indent()
-        itemsToMove.push itm
+        countOfItems++ #itemsToMove.push itm
         itm.isMoving true
       isMoving true
-      # return true
+      itemsToMoveCount countOfItems
 
     moveHere = (data) ->
-      # for itm in items()[items.indexOf(data) + 1..]
-      #   if not itm.isMoving()
-      #     nextItem = itm
-      #     break
-      # sortIncrement = 1
-      # # indentIncrement = if data.indent() < itemsToMove[0].indent() - 1 then data.indent() - itemsToMove[0].indent() + 1 else 0
-      # try
-      #   sortIncrement = -1 * (itemsToMove[0].sortOrder() - ((nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1)))
-      # 
-      # Items.update { $in: _id: itemsToMove},
-      #   { $push: ancestors: data._id 
-      #     $set: sortOrder: data.sortOrder()
-      #   },
-      #   { multi: true }
-      # Items.update itemsToMove[0],
-      #   $set: parent: data._id
-      # # for itm, i in itemsToMove
-      #   # newSortOrder = data.sortOrder() + (sortIncrement * (i+1))
-      #   # Items.update itm._id(),
-      #     # $set: 
-      #       # sortOrder: newSortOrder
-      #   # itm.isMoving false
-      # itemsToMove = []
-      # isMoving false
-      # return true
+      # splice from observableArray and insert in new pos
+      cutItems = items.splice itemsToMoveIndex(), itemsToMoveCount()
+      
+      # root item to move should become sibling of selected item
+      rootItemToMove = cutItems[0]
+      rootItemOldIndent = rootItemToMove.indent()
+      rootItemToMove.parent data.parent()
+      rootItemToMove.ancestors data.ancestors()
 
+      # root item's children should get new ancestory
+      for itm in cutItems[1..]
+        itm.ancestors.splice 0, rootItemOldIndent
+        itm.ancestors.unshift(id) for id in rootItemToMove.ancestors[..].reverse()
+
+      pastePos = items.indexOf(data) + 1
+      tail = items.splice(pastePos, 9e9)
+      items.push itm for itm in cutItems
+      items.push itm for itm in tail
+      isMoving false
+
+      # Save each item in list with new sortOrder based on pos in observableArray
+      for itm,i in items()
+        Items.update itm._id(),
+          $set: 
+            sortOrder: i
+            parent: itm.parent()
+            ancestors: itm.ancestors()
+        itm.isMoving false
+        prevItem = itm
+
+      return
+      
     return {
       items: items
       createNewItem: createNewItem
