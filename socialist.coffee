@@ -1,6 +1,6 @@
 Items = new Meteor.Collection 'items'
 
-samples = (exports ? this).samples or []
+samples = (exports ? this).samples or [] # from the global scope on either server or client
 
 reset_data = -> # Executes on both client and server.
   Items.remove {list: vm.listName?() or 'Sample'}
@@ -8,7 +8,6 @@ reset_data = -> # Executes on both client and server.
 
     newid = Items.insert
       item: sample.item
-      # indent: sample.ancestors.length
       archived: sample.archived
       list: vm.listName?() or 'Sample'
       sortOrder: _i
@@ -28,112 +27,73 @@ if Meteor.is_client
 
   itemMapping = 
     item:
-      # item observable is created
+      # item observable is created, actually the text entered for an item object
       create: (options) ->
-        itemObject = options.parent
+        itemObject = options.parent # get the real item object
         observable = ko.observable(options.data)
-        itemObject.isEditing = ko.observable(false)
         itemObject.isMoving = ko.observable(false)
-        #indent2 = ko.observable(itemObject.ancestors?().length)
         itemObject.indent = ko.computed -> 
-          if @ancestors then @ancestors().length else 0
+          return @ancestors?().length ? 0
         , itemObject
-        itemObject.modeTemplate = -> 
-          if itemObject.isEditing() then 'itemEditing' else 'item'
-        itemObject.setEditing = -> itemObject.isEditing(true)
-        itemObject.clearEditing = -> itemObject.isEditing(false)
         itemObject.doIndent = ->
           pos = vm.vm().items.indexOf(itemObject)
-          items = vm.vm().items[..pos-1].reverse()
-          for itm in items # walk up the list to find first sibling
+          itemsUpward = vm.vm().items[..pos-1].reverse()
+          for itm in itemsUpward # walk up the list to find first sibling
             if itm._id() is itemObject.parent() # parent found before sibling, cannot indent
               break;
             if itm.parent() is itemObject.parent()
+              # first older sibling becomes my parent
               ancestors = itm.ancestors()
               ancestors.push itm._id()
               Items.update itemObject._id(),
                 $set:
                   parent: itm._id()
                   ancestors: ancestors
+
+              # my children to receive a new ancestor
+              Items.update 
+                ancestors: itemObject._id()
+              , $push: ancestors: itm._id()
               break
+
           return
 
-          # maxIndent = 0
-          # pos = vm.vm().items().indexOf(itemObject) # current position in items
-          # maxIndent = vm.vm().items()[pos-1].indent() + 1 if pos > 0 # indent of previous item
-          # if itemObject.indent() < maxIndent
-          #   pi = itemObject.indent()
-          #   Items.update itemObject._id(),
-          #     $inc: indent: 1
-          #   for itm in vm.vm().items[pos+1..]
-          #     break if itm.indent() <= pi
-          #     Items.update itm._id(),
-          #       $inc: indent: 1
         itemObject.doOutdent = -> 
-          parent = Items.findOne itemObject.parent() # become sibling of parent
+          # Grandparent becomes my parent
+          parent = Items.findOne itemObject.parent()
           Items.update itemObject._id(),
             $set: 
               parent: parent?.parent
               ancestors: parent?.ancestors
-          # if itemObject.indent() > 0
-          #   pos = vm.vm().items().indexOf(itemObject) # current position in items
-          #   pi = itemObject.indent()
-          #   Items.update itemObject._id(), 
-          #     $inc: indent: -1
-          #   for itm in vm.vm().items[pos+1..]
-          #     break if itm.indent() <= pi
-          #     Items.update itm._id(),
-          #       $inc: indent: -1
+          # Remove my old parent from my children's ancestors
+          Items.update
+            ancestors: itemObject._id()
+          , $pull: ancestors: parent?._id
+
         itemObject.save = -> 
-          itemObject.isEditing(false)
+          # itemObject.isEditing(false)
           Items.update itemObject._id(),
             $set: 
               item: itemObject.item()
               # indent: itemObject.indent()
-              archived: false
-        itemObject.remove = -> 
+              # archived: false
 
-          # archive/remove all items having this one as an ancestor
-          # archive/remove this item
+        itemObject.remove = ->           
+          if itemObject.archived() # remove item and children
+            Items.remove 
+              ancestors: itemObject._id()
+            Items.remove itemObject._id()
+          else # archive item and children
+            Items.update { ancestors: itemObject._id() }, 
+              { $set: archived: true },
+              { multi: true }
+            Items.update itemObject._id(),
+              $set: archived: true
 
-          # pos = vm.vm().items().indexOf(itemObject) # current position in items
-          # pi = itemObject.indent()
-          # if itemObject.archived()
-          #   Items.remove itemObject._id()
-          #   for itm in vm.vm().items[pos+1..]
-          #     break if itm.indent() <= pi
-          #     Items.remove itm._id()
-          # else
-          #   Items.update itemObject._id(), 
-          #     $set: archived: true
-          #   for itm in vm.vm().items[pos+1..]
-          #     break if itm.indent() <= pi
-          #     Items.update itm._id(), 
-          #     $set: archived: true
+        # observable.subscribe ->
+        #   if observable() is '' and itemObject.indent() is 0 then itemObject.archived(true)
 
         return observable
-
-  # The empty row at the bottom of the list for inserting new items
-  blankItem = ->
-    @item = ko.observable('')
-    @indent = ko.observable(0)
-    @save = =>
-      items = vm.vm().items();
-      Items.insert
-        item: @item()
-        indent: @indent()
-        archived: false
-        sortOrder: if items.length then items[items.length-1].sortOrder() + 8 else 0
-        list: vm.listName()
-      @item('')
-    @doIndent = =>
-      maxIndent = 0
-      try
-        maxIndent = vm.vm().items()[vm.vm().items().length - 1].indent() + 1 # indent of last item
-      @indent(@indent() + 1) if @indent() < maxIndent
-    @doOutdent = =>
-      @indent(@indent() - 1) if @indent() > 0
-    return
 
   # The form to create a new list
   newListModel = (parent) ->
@@ -145,69 +105,137 @@ if Meteor.is_client
     @save = =>
       Session.set 'listName', canonicalListName @name()
       window.location.href = 'http://' + window.location.host + '/#!' + canonicalListName(@name())
-      window.location.reload() #parent.listName canonicalListName(@name())
+      window.location.reload()
       return
     return   
 
   listModel = (parent) ->
     _this = this
-    items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)
-    itemToInsert = new blankItem()
+    items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)   
     isMoving = ko.observable false
     itemsToMove = []
-    indentOn2LeadingSpaces = (model,event) ->
+
+    createNewItem = ->
+      newid = Items.insert 
+        item: ''
+        archived: false
+        sortOrder: items().length
+        list: vm.listName()
+        parent: ''
+        ancestors: []
+      Meteor.defer ->
+        $(".#{newid} input")[0].focus()
+    
+    indentOn3Spaces = (model,event) ->
       return unless event.which is 32
-      return unless model.item().substr(0,2) is '  '
+      return unless model.item().substr(0,2) is '  ' # space event and already 2 leading spaces
       model.item(model.item().substring(2))
       model.doIndent()
+
+      # keep focus on my textbox after update
+      myId = model._id()
+      Meteor.defer ->
+        $(".#{myId} input")[0].focus()
+    
     outdentOnBackspaceAndEmpty = (model, event) ->
       return unless event.which is 8
       return unless model.item() is ''
-      model.doOutdent()
-      # model.remove() if model.indent() is -1
-    checkIndentationKeyBindings = (model, event) ->
-      indentOn2LeadingSpaces model, event
-      outdentOnBackspaceAndEmpty model, event
-    saveOnEnter = (model, event) ->
-      return true unless event.which is 13
       model.save()
+      if !model.parent()
+        focusid = model._id()
+        focusid = items()[items.indexOf(model)-1]?._id() if model.archived()
+        model.remove()
+      
+        Meteor.defer ->
+          $(".#{focusid} input").each ->
+            $(@).focus()
+
+      else
+        model.doOutdent()
+
+        # keep focus on my textbox after update
+        myId = model._id()
+        Meteor.defer ->
+          $(".#{myId} input")[0].focus()
+
+    checkKeydownBindings = (model, event) ->
+      indentOn3Spaces model, event
+      outdentOnBackspaceAndEmpty model, event
+      saveOnEnter model, event
+      focusPreviousOnUp model, event
+      focusNextOnDown model, event
+      return true
+
+    focusPreviousOnUp = (model, event) ->
+      return unless event.which is 38
+      prevId = items()[items.indexOf(model)-1]?._id()
+      model.save()
+      if prevId
+        Meteor.defer ->
+          $(".#{prevId} input")[0].focus() 
+
+    focusNextOnDown = (model, event) ->
+      return unless event.which is 40
+      nextId = items()[items.indexOf(model)+1]?._id()
+      model.save()
+      if nextId
+        Meteor.defer ->
+          $(".#{nextId} input")[0].focus()
+
+    saveOnEnter = (model, event) ->
+      return true unless event.which is 13      
+      model.save()
+      pos = items.indexOf(model)
+      # either I'm the last item or get the next item's sort order
+      nextOrder = items()[pos+1]?.sortOrder() or model.sortOrder() + 2
+      newid = Items.insert
+        item: ''
+        archived: false
+        sortOrder: model.sortOrder() + ((nextOrder - model.sortOrder()) / 2) # split the difference
+        list: vm.listName()
+        parent: model.parent?()
+        ancestors: model.ancestors?()
+
+      Meteor.defer ->
+        $(".#{newid} input")[0].focus()
       return false
+
     moveItem = (data) ->
-      pos = items.indexOf(data)
-      itemsToMove = []
-      itemsToMove.push(data)
-      data.isMoving true
-      for itm in items[pos+1..]
-        break if itm.indent() <= data.indent()
-        itemsToMove.push itm
-        itm.isMoving true
-      isMoving true
+      # pos = items.indexOf(data)
+      # itemsToMove = []
+      # itemsToMove.push(data)
+      # data.isMoving true
+      # for itm in items[pos+1..]
+      #   break if itm.indent() <= data.indent()
+      #   itemsToMove.push itm
+      #   itm.isMoving true
+      # isMoving true
+      return true
+
     moveHere = (data) ->
-      for itm in items()[items.indexOf(data) + 1..]
-        if not itm.isMoving()
-          nextItem = itm
-          break
-      sortIncrement = 8
-      indentIncrement = if data.indent() < itemsToMove[0].indent() - 1 then data.indent() - itemsToMove[0].indent() + 1 else 0
-      try
-        sortIncrement = (nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1)
-      for itm, i in itemsToMove
-        newSortOrder = data.sortOrder() + (sortIncrement * (i+1))
-        Items.update itm._id(),
-          $set: sortOrder: newSortOrder
-          $inc: indent: indentIncrement
-        itm.isMoving false
-      itemsToMove = []
-      isMoving false
+      # for itm in items()[items.indexOf(data) + 1..]
+      #   if not itm.isMoving()
+      #     nextItem = itm
+      #     break
+      # sortIncrement = 8
+      # indentIncrement = if data.indent() < itemsToMove[0].indent() - 1 then data.indent() - itemsToMove[0].indent() + 1 else 0
+      # try
+      #   sortIncrement = (nextItem.sortOrder() - data.sortOrder()) / (itemsToMove.length + 1)
+      # for itm, i in itemsToMove
+      #   newSortOrder = data.sortOrder() + (sortIncrement * (i+1))
+      #   Items.update itm._id(),
+      #     $set: sortOrder: newSortOrder
+      #     $inc: indent: indentIncrement
+      #   itm.isMoving false
+      # itemsToMove = []
+      # isMoving false
+      return true
 
     return {
       items: items
-      itemToInsert: itemToInsert
-      # indentOn2LeadingSpaces: indentOn2LeadingSpaces
-      # outdentOnBackspaceAndEmpty: outdentOnBackspaceAndEmpty
-      checkIndentationKeyBindings: checkIndentationKeyBindings
+      createNewItem: createNewItem
+      checkKeydownBindings: checkKeydownBindings
       saveOnEnter: saveOnEnter
-      # movingItem: movingItem
       moveItem : moveItem
       isMoving: isMoving
       moveHere: moveHere
@@ -226,9 +254,6 @@ if Meteor.is_client
     @showJSON = =>
       if @vm().items then @json ko.mapping.toJSON(@vm().items)
       @showingJSON true
-      #setTimeout => 
-      #  @showingJSON false
-      #, 30000
     @newList = ->
       Session.set 'listName', ''
       return true
@@ -238,9 +263,9 @@ if Meteor.is_client
         archived: true
     @archiveAll = =>
       if @vm().items
-        for itm in @vm().items()
-          Items.update itm._id(), 
-            $set: archived: true
+        Items.update { list: vm.listName }, 
+          { $set: archived: true },
+          { multi: true }
       return
     return
 

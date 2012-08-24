@@ -17,14 +17,25 @@ button.done {
   -moz-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0;
 }
+.table-striped tbody tr.archived td {
+  background-color: #fffdd2;
+}
+.table-striped tbody tr.archived:nth-child(odd) td {
+  background-color: #fffcc3;
+}
+.table tbody tr.archived:hover td,
+.table tbody tr.archived:hover th {
+  background-color: #fffcb8;
+}
 .archived {
   text-decoration: line-through;
 }
 i.move {
   cursor: pointer;
 }
-.moving {
+.moving input {
   color: #b3b3b3;
+  background-color: black;
 }
 th.icons {
   width: 6em;
@@ -45,16 +56,22 @@ td.item {
 }
 div.itemEditing {
   position: relative;
-  padding-right: 42px;
-}
-div.itemEditing input {
-  margin-top: 0.65em;
-  -webkit-border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  border-radius: 3px 0 0 3px;
 }
 .fullwidth {
   width: 100%;
+}
+input.natural {
+  background: transparent;
+  border: 0px solid transparent;
+  outline: 0px solid transparent;
+  left: -1px;
+  top: -1px;
+  width: 100%;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  -webkit-box-shadow: inset 0 0px 0px;
+  -moz-box-shadow: inset 0 0px 0px;
+  box-shadow: inset 0 0px 0px;
 }
 /*
 .navbar {
@@ -136,12 +153,6 @@ div.itemEditing input {
 @media (max-width: 979px) {
   body {
     padding-top: 0;
-  }
-  div.itemEditing input {
-    margin-top: 0.6em;
-  }
-  div.itemEditing {
-    padding-right: 32px;
   }
 }
 @media (max-width: 767px) {
