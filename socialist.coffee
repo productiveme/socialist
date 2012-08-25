@@ -21,43 +21,35 @@ if Meteor.is_client
     item:
       # item observable is created, actually the text entered for an item object
       create: (options) ->
-        itemObject = options.parent # get the real item object
-        observable = ko.observable(options.data)
+        itemObject = options.parent # get the item object
+        observable = ko.observable(options.data) # make observable from item string
+
         itemObject.isMoving = ko.observable(false)
         itemObject.indent = ko.observable(@idx?().split('.').length)
-        itemObject.hasUnsavedChanges = false
-        itemObject.item.subscribe ->
-          itemObject.hasUnsavedChanges = true
-        itemObject.archived.subscribe ->
-          itemObject.hasUnsavedChanges = true
-        itemObject.idx.subscribe ->
-          itemObject.hasUnsavedChanges = true
+
         itemObject.canMoveHere = ko.computed ->
           return vm.vm().isMoving() and not @isMoving()
         , itemObject
+
         itemObject.doIndent = ->
-          # get previous item's index
-          prevIdx = vm.vm().prevItem(itemObject)?.idx()
-
-          # replace all starting with my index with previous item's index
-          for itm in items
-            itm.idx(itm.idx().replace(itemObject.idx(),prevIdx + '.001')) 
-
+          descendents = itemObject.getDescendents()
+          itemObject.indent(itemObject.indent() + 1)
+          itm.indent(itm.indent() + 1) for itm in descendents
           vm.vm().saveAll()
-
           return
 
         itemObject.doOutdent = -> 
-          # Grandparent becomes my parent
-          parent = Items.findOne itemObject.parent()
-          Items.update itemObject._id(),
-            $set: 
-              parent: parent?.parent
-              ancestors: parent?.ancestors
-          # Remove my old parent from my children's ancestors
-          Items.update { ancestors: itemObject._id() },
-            { $pull: ancestors: parent?._id },
-            { multi: true }
+          descendents = itemObject.getDescendents()
+          itemObject.indent(itemObject.indent() - 1)
+          itm.indent(itm.indent() - 1) for itm in descendents
+          vm.vm().saveAll()
+          return
+
+        itemObject.getDescendents = ->
+          itemsAfter = vm.vm().items()[vm.vm().items.indexOf(itemObject) + 1..]
+          for itm in itemsAfter
+            break if itm.indent() <= itemObject.indent()
+            return itm
 
         itemObject.save = -> 
           Items.update itemObject._id(),
@@ -65,24 +57,20 @@ if Meteor.is_client
               item: itemObject.item()
               
         itemObject.unarchive = ->
-          # unarchive children as well
-          Items.update { ancestors: itemObject._id() }, 
-            { $set: archived: false },
-            { multi: true }
-          Items.update itemObject._id(),
-            $set: archived: false
+          descendents = itemObject.getDescendents()
+          itemObject.archived(false)
+          itm.archived(false) for itm in descendents
+          vm.vm().saveAll()
 
         itemObject.remove = ->           
+          descendents = itemObject.getDescendents()
           if itemObject.archived() # remove item and children
-            Items.remove 
-              ancestors: itemObject._id()
             Items.remove itemObject._id()
+            Items.remove itm._id() for itm in descendents
           else # archive item and children
-            Items.update { ancestors: itemObject._id() }, 
-              { $set: archived: true },
-              { multi: true }
-            Items.update itemObject._id(),
-              $set: archived: true
+            itemObject.archived(true)
+            itm.archived(true) for itm in descendents
+            vm.vm().saveAll()
 
         return observable
 
@@ -118,22 +106,37 @@ if Meteor.is_client
       return items()[items.indexOf(model)-1]
 
     saveAll = ->
-      for itm in items
-        if itm.hasUnsavedChanges
-          Items.update itm._id(),
-            $set:
-              item: itm.item()
-              archived: itm.archived()
-              idx: itm.idx()
+      curIdx = "001"
+      for itm,i in items
+        # first child if indent greater than previous
+        curIdx = curIdx + ".001" if itm.indent() > prevItem?.indent()
+        # next sibling if indent the same as previous
+        curIdx = nextSiblingnIdx(curIdx) if itm.indent() is prevItem?.indent()
+        # ancestor's next sibling if indent smaller than previous
+        if itm.indent() < prevItem?.indent()
+          # find an ancestor with that indent and make next sibling
+          ancestorFound = false
+          for ancestorItem in items()[..i-1].reverse()
+            if ancestorItem.indent() is itm.indent()
+              curIdx = nextSiblingnIdx ancestorItem.idx()
+              ancestorFound = true
+              break
+
+        Items.update itm._id(),
+          $set:
+            item: itm.item()
+            archived: itm.archived()
+            idx: curIdx
+        prevItem = itm
+      return
 
     createNewItem = ->
+      lastIdx = items()[items().length].idx()
       newid = Items.insert 
         item: ''
         archived: false
-        sortOrder: items().length
         list: vm.listName()
-        parent: ''
-        ancestors: []
+        idx: nextSiblingnIdx lastIdx
       Meteor.defer ->
         $(".#{newid} input")[0].focus()
     
@@ -196,16 +199,12 @@ if Meteor.is_client
     saveOnEnter = (model, event) ->
       return true unless event.which is 13      
       model.save()
-      pos = items.indexOf(model)
-      # either I'm the last item or get the next item's sort order
-      nextOrder = items()[pos+1]?.sortOrder() or model.sortOrder() + 2
+
       newid = Items.insert
         item: ''
         archived: false
-        sortOrder: model.sortOrder() + ((nextOrder - model.sortOrder()) / 2) # split the difference
         list: vm.listName()
-        parent: model.parent?()
-        ancestors: model.ancestors?()
+        idx: nextSiblingnIdx model.idx()
 
       Meteor.defer ->
         $(".#{newid} input")[0].focus()
@@ -306,6 +305,9 @@ if Meteor.is_client
 
   canonicalListName = (name) ->
     name.replace(/[^-A-z0-9\s]*/g,'').replace(/\s+/g, '-')
+
+  nextSiblingnIdx = (idx) ->
+    idx.replace /\d{3}$/, ("000" + (parseInt(idx.match(/\d{3}$/))+1)).slice(-3)
 
   Session.set 'listName', window.location.hash.replace('#!', '') or ''
 
