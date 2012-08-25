@@ -31,17 +31,25 @@
           observable = ko.observable(options.data);
           itemObject.isMoving = ko.observable(false);
           itemObject.indent = ko.observable(typeof this.idx === "function" ? this.idx().split('.').length : void 0);
+          itemObject.hasUnsavedChanges = false;
+          itemObject.item.subscribe(function() {
+            return itemObject.hasUnsavedChanges = true;
+          });
+          itemObject.archived.subscribe(function() {
+            return itemObject.hasUnsavedChanges = true;
+          });
+          itemObject.idx.subscribe(function() {
+            return itemObject.hasUnsavedChanges = true;
+          });
           itemObject.canMoveHere = ko.computed(function() {
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
           itemObject.doIndent = function() {
-            var items, itm, pos, prevIdx, _i, _len, _ref;
-            items = vm.vm().items;
-            pos = items.indexOf(itemObject);
-            prevIdx = (_ref = items()[pos - 1]) != null ? _ref.idx() : void 0;
+            var itm, prevIdx, _i, _len, _ref;
+            prevIdx = (_ref = vm.vm().prevItem(itemObject)) != null ? _ref.idx() : void 0;
             for (_i = 0, _len = items.length; _i < _len; _i++) {
               itm = items[_i];
-              itm.idx(itm.idx().replace(itemObject.idx(), prevIdx));
+              itm.idx(itm.idx().replace(itemObject.idx(), prevIdx + '.001'));
             }
             vm.vm().saveAll();
           };
@@ -135,7 +143,7 @@
       };
     };
     listModel = function(parent) {
-      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, rotateActionSets, saveAll, saveOnEnter, _this;
+      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, prevItem, rotateActionSets, saveAll, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
@@ -148,24 +156,25 @@
       itemsToMoveIndex = ko.observable();
       itemsToMoveCount = ko.observable();
       actionSets = ko.observableArray(['archiveRemove', 'indentOutdent']);
+      prevItem = function(model) {
+        return items()[items.indexOf(model) - 1];
+      };
       saveAll = function() {
-        var i, idxString, itm, newIdx, _i, _j, _len, _ref, _ref1, _results;
-        newIdx = [];
-        _ref = items();
+        var itm, _i, _len, _results;
         _results = [];
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          itm = _ref[i];
-          newIdx[itm.indent()] = (newIdx[itm.indent()] || 0) + 1;
-          idxString = "";
-          for (i = _j = 0, _ref1 = itm.indent(); 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-            idxString += (idxString !== "" ? "." : void 0) + ("000" + newIdx[i]).slice(-3);
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          itm = items[_i];
+          if (itm.hasUnsavedChanges) {
+            _results.push(Items.update(itm._id(), {
+              $set: {
+                item: itm.item(),
+                archived: itm.archived(),
+                idx: itm.idx()
+              }
+            }));
+          } else {
+            _results.push(void 0);
           }
-          _results.push(Items.update(itm._id(), {
-            $set: {
-              item: itm.item(),
-              idx: idxString
-            }
-          }));
         }
         return _results;
       };
@@ -300,7 +309,7 @@
         return itemsToMoveCount(countOfItems);
       };
       moveHere = function(data) {
-        var cutItems, i, id, itm, pastePos, prevItem, rootItemOldIndent, rootItemToMove, tail, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+        var cutItems, i, id, itm, pastePos, rootItemOldIndent, rootItemToMove, tail, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
         cutItems = items.splice(itemsToMoveIndex(), itemsToMoveCount());
         rootItemToMove = cutItems[0];
         rootItemOldIndent = rootItemToMove.indent();
@@ -424,6 +433,27 @@
   }
 
   if (Meteor.is_server) {
+    Meteor.methods({
+      indent: function(idx, prevIdx) {
+        var itemWithChildren, itm, startsWithIdx, _i, _len, _results;
+        startsWithIdx = new RegExp("^" + (idx.replace('.', '\\.')) + ".*", "i");
+        itemWithChildren = Items.find({
+          idx: startsWithIdx
+        });
+        _results = [];
+        for (_i = 0, _len = itemWithChildren.length; _i < _len; _i++) {
+          itm = itemWithChildren[_i];
+          _results.push(Items.update(itm._id, {
+            $set: {
+              idx: itm.idx.replace(startsWithIdx, prevIdx + '.001')
+            }
+          }, {
+            multi: true
+          }));
+        }
+        return _results;
+      }
+    });
     Meteor.startup(function() {
       if (Items.find().count() === 0) {
         return reset_data();

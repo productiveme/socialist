@@ -24,18 +24,24 @@ if Meteor.is_client
         itemObject = options.parent # get the real item object
         observable = ko.observable(options.data)
         itemObject.isMoving = ko.observable(false)
-        itemObject.indent = ko.observable(@idx?().split('.').length) 
+        itemObject.indent = ko.observable(@idx?().split('.').length)
+        itemObject.hasUnsavedChanges = false
+        itemObject.item.subscribe ->
+          itemObject.hasUnsavedChanges = true
+        itemObject.archived.subscribe ->
+          itemObject.hasUnsavedChanges = true
+        itemObject.idx.subscribe ->
+          itemObject.hasUnsavedChanges = true
         itemObject.canMoveHere = ko.computed ->
           return vm.vm().isMoving() and not @isMoving()
         , itemObject
         itemObject.doIndent = ->
           # get previous item's index
-          items = vm.vm().items
-          pos = items.indexOf(itemObject)
-          prevIdx = items()[pos-1]?.idx()
+          prevIdx = vm.vm().prevItem(itemObject)?.idx()
 
           # replace all starting with my index with previous item's index
-          itm.idx(itm.idx().replace(itemObject.idx(),prevIdx)) for itm in items
+          for itm in items
+            itm.idx(itm.idx().replace(itemObject.idx(),prevIdx + '.001')) 
 
           vm.vm().saveAll()
 
@@ -108,17 +114,17 @@ if Meteor.is_client
 
     actionSets = ko.observableArray ['archiveRemove', 'indentOutdent']
 
+    prevItem = (model) ->
+      return items()[items.indexOf(model)-1]
+
     saveAll = ->
-      newIdx = []
-      for itm,i in items()
-        newIdx[itm.indent()] = (newIdx[itm.indent()] or 0) + 1
-        idxString = ""
-        for i in [0..itm.indent()] 
-          idxString += ("." unless idxString is "") + ("000" + newIdx[i]).slice(-3)
-        Items.update itm._id(),
-          $set:
-            item: itm.item()
-            idx: idxString
+      for itm in items
+        if itm.hasUnsavedChanges
+          Items.update itm._id(),
+            $set:
+              item: itm.item()
+              archived: itm.archived()
+              idx: itm.idx()
 
     createNewItem = ->
       newid = Items.insert 
@@ -309,5 +315,15 @@ if Meteor.is_client
     ko.applyBindings vm
 
 if Meteor.is_server
+  
+  Meteor.methods
+    indent: (idx, prevIdx) ->
+      startsWithIdx = new RegExp("^#{idx.replace('.','\\.')}.*", "i")
+      itemWithChildren = Items.find idx: startsWithIdx
+      for itm in itemWithChildren
+        Items.update itm._id,
+          { $set: idx: itm.idx.replace startsWithIdx, prevIdx + '.001' }
+          { multi: true }
+
   Meteor.startup -> 
     reset_data() if Items.find().count() is 0
