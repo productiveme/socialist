@@ -7,7 +7,7 @@
   samples = (typeof exports !== "undefined" && exports !== null ? exports : this).samples || [];
 
   reset_data = function() {
-    var a, i, newid, s, sample, _i, _j, _len, _len1, _ref;
+    var i, newid, sample, _i, _len;
     Items.remove({
       list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Sample'
     });
@@ -16,28 +16,9 @@
       newid = Items.insert({
         item: sample.item,
         archived: sample.archived,
-        list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Sample',
-        sortOrder: _i,
-        parent: sample.parent,
-        ancestors: sample.ancestors
+        list: (typeof vm.listName === "function" ? vm.listName() : void 0) || 'Shopping-List',
+        idx: sample.idx
       });
-      _ref = samples.slice(i + 1);
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        s = _ref[_j];
-        if (s.parent) {
-          s.parent = s.parent.replace(sample._id, newid);
-        }
-        s.ancestors = (function() {
-          var _k, _len2, _ref1, _results;
-          _ref1 = s.ancestors;
-          _results = [];
-          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-            a = _ref1[_k];
-            _results.push(a.replace(sample._id, newid));
-          }
-          return _results;
-        })();
-      }
     }
   };
 
@@ -49,43 +30,20 @@
           itemObject = options.parent;
           observable = ko.observable(options.data);
           itemObject.isMoving = ko.observable(false);
-          itemObject.indent = ko.computed(function() {
-            var _ref;
-            return (_ref = typeof this.ancestors === "function" ? this.ancestors().length : void 0) != null ? _ref : 0;
-          }, itemObject);
+          itemObject.indent = ko.observable(typeof this.idx === "function" ? this.idx().split('.').length : void 0);
           itemObject.canMoveHere = ko.computed(function() {
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
           itemObject.doIndent = function() {
-            var ancestors, itemsUpward, itm, pos, _i, _len;
-            pos = vm.vm().items.indexOf(itemObject);
-            itemsUpward = vm.vm().items.slice(0, (pos - 1) + 1 || 9e9).reverse();
-            for (_i = 0, _len = itemsUpward.length; _i < _len; _i++) {
-              itm = itemsUpward[_i];
-              if (itm._id() === itemObject.parent()) {
-                break;
-              }
-              if (itm.parent() === itemObject.parent()) {
-                ancestors = itm.ancestors().slice(0);
-                ancestors.push(itm._id());
-                Items.update(itemObject._id(), {
-                  $set: {
-                    parent: itm._id(),
-                    ancestors: ancestors
-                  }
-                });
-                Items.update({
-                  ancestors: itemObject._id()
-                }, {
-                  $push: {
-                    ancestors: itm._id()
-                  }
-                }, {
-                  multi: true
-                });
-                break;
-              }
+            var items, itm, pos, prevIdx, _i, _len, _ref;
+            items = vm.vm().items;
+            pos = items.indexOf(itemObject);
+            prevIdx = (_ref = items()[pos - 1]) != null ? _ref.idx() : void 0;
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              itm = items[_i];
+              itm.idx(itm.idx().replace(itemObject.idx(), prevIdx));
             }
+            vm.vm().saveAll();
           };
           itemObject.doOutdent = function() {
             var parent;
@@ -177,19 +135,40 @@
       };
     };
     listModel = function(parent) {
-      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, rotateActionSets, saveOnEnter, _this;
+      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, rotateActionSets, saveAll, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
       }, {
         sort: {
-          sortOrder: 1
+          idx: 1
         }
       }, itemMapping);
       isMoving = ko.observable(false);
       itemsToMoveIndex = ko.observable();
       itemsToMoveCount = ko.observable();
       actionSets = ko.observableArray(['archiveRemove', 'indentOutdent']);
+      saveAll = function() {
+        var i, idxString, itm, newIdx, _i, _j, _len, _ref, _ref1, _results;
+        newIdx = [];
+        _ref = items();
+        _results = [];
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          itm = _ref[i];
+          newIdx[itm.indent()] = (newIdx[itm.indent()] || 0) + 1;
+          idxString = "";
+          for (i = _j = 0, _ref1 = itm.indent(); 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+            idxString += (idxString !== "" ? "." : void 0) + ("000" + newIdx[i]).slice(-3);
+          }
+          _results.push(Items.update(itm._id(), {
+            $set: {
+              item: itm.item(),
+              idx: idxString
+            }
+          }));
+        }
+        return _results;
+      };
       createNewItem = function() {
         var newid;
         newid = Items.insert({

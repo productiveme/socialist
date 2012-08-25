@@ -9,17 +9,9 @@ reset_data = -> # Executes on both client and server.
     newid = Items.insert
       item: sample.item
       archived: sample.archived
-      list: vm.listName?() or 'Sample'
-      sortOrder: _i
-      parent: sample.parent
-      ancestors: sample.ancestors
+      list: vm.listName?() or 'Shopping-List'
+      idx: sample.idx
     
-    # Correct the ids with the newly created ones
-    for s in samples[i+1..]
-      s.parent = s.parent.replace sample._id, newid if s.parent
-      s.ancestors = for a in s.ancestors 
-        a.replace sample._id, newid
-
   return # nothing
 
 
@@ -32,32 +24,20 @@ if Meteor.is_client
         itemObject = options.parent # get the real item object
         observable = ko.observable(options.data)
         itemObject.isMoving = ko.observable(false)
-        itemObject.indent = ko.computed -> 
-          return @ancestors?().length ? 0
-        , itemObject
+        itemObject.indent = ko.observable(@idx?().split('.').length) 
         itemObject.canMoveHere = ko.computed ->
           return vm.vm().isMoving() and not @isMoving()
         , itemObject
         itemObject.doIndent = ->
-          pos = vm.vm().items.indexOf(itemObject)
-          itemsUpward = vm.vm().items[..pos-1].reverse()
-          for itm in itemsUpward # walk up the list to find first sibling
-            if itm._id() is itemObject.parent() # parent found before sibling, cannot indent
-              break;
-            if itm.parent() is itemObject.parent()
-              # first older sibling becomes my parent
-              ancestors = itm.ancestors()[..]
-              ancestors.push itm._id()
-              Items.update itemObject._id(),
-                $set:
-                  parent: itm._id()
-                  ancestors: ancestors
+          # get previous item's index
+          items = vm.vm().items
+          pos = items.indexOf(itemObject)
+          prevIdx = items()[pos-1]?.idx()
 
-              # my children to receive a new ancestor
-              Items.update { ancestors: itemObject._id() },
-                { $push: ancestors: itm._id() },
-                { multi: true }
-              break
+          # replace all starting with my index with previous item's index
+          itm.idx(itm.idx().replace(itemObject.idx(),prevIdx)) for itm in items
+
+          vm.vm().saveAll()
 
           return
 
@@ -120,13 +100,25 @@ if Meteor.is_client
 
   listModel = (parent) ->
     _this = this
-    items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {sortOrder: 1}}, itemMapping)   
+    items = ko.meteor.find(Items, {list: parent.listName()}, {sort: {idx: 1}}, itemMapping)   
     isMoving = ko.observable false
 
     itemsToMoveIndex = ko.observable()
     itemsToMoveCount = ko.observable()
 
     actionSets = ko.observableArray ['archiveRemove', 'indentOutdent']
+
+    saveAll = ->
+      newIdx = []
+      for itm,i in items()
+        newIdx[itm.indent()] = (newIdx[itm.indent()] or 0) + 1
+        idxString = ""
+        for i in [0..itm.indent()] 
+          idxString += ("." unless idxString is "") + ("000" + newIdx[i]).slice(-3)
+        Items.update itm._id(),
+          $set:
+            item: itm.item()
+            idx: idxString
 
     createNewItem = ->
       newid = Items.insert 

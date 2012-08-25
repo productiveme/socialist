@@ -3,71 +3,35 @@
 
   (typeof exports !== "undefined" && exports !== null ? exports : this).samples = [
     {
-      "_id": "5c1dab6b-af33-447e-84af-23830228083c",
-      "isMoving": false,
-      "indent": 0,
-      "canMoveHere": false,
       "item": "Shopping",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 0,
-      "parent": "",
-      "ancestors": []
+      "idx": "001"
     }, {
-      "_id": "6445815e-d043-497d-83d1-2723b1065b7c",
-      "isMoving": false,
-      "indent": 1,
-      "canMoveHere": false,
       "item": "Groceries",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 1,
-      "parent": "5c1dab6b-af33-447e-84af-23830228083c",
-      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c"]
+      "idx": "001.001"
     }, {
-      "_id": "ebcaebc1-aeed-4219-8a7a-b64e94bc073e",
-      "isMoving": false,
-      "indent": 2,
-      "canMoveHere": false,
       "item": "Milk",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 2,
-      "parent": "6445815e-d043-497d-83d1-2723b1065b7c",
-      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "6445815e-d043-497d-83d1-2723b1065b7c"]
+      "idx": "001.001.001"
     }, {
-      "_id": "bc44c337-2bc4-4510-80bc-3abe689ee5c9",
-      "isMoving": false,
-      "indent": 2,
-      "canMoveHere": false,
       "item": "Bread",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 3,
-      "parent": "6445815e-d043-497d-83d1-2723b1065b7c",
-      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "6445815e-d043-497d-83d1-2723b1065b7c"]
+      "idx": "001.001.002"
     }, {
-      "_id": "9e8ab162-03bf-4e3e-99b6-6f523c34b96b",
-      "isMoving": false,
-      "indent": 1,
-      "canMoveHere": false,
       "item": "Household",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 4,
-      "parent": "5c1dab6b-af33-447e-84af-23830228083c",
-      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c"]
+      "idx": "001.002"
     }, {
-      "_id": "554a93f6-1047-43c9-9765-5d9e3a08c268",
-      "isMoving": false,
-      "indent": 2,
-      "canMoveHere": false,
       "item": "Soap",
       "archived": false,
       "list": "Shopping-List",
-      "sortOrder": 5,
-      "parent": "9e8ab162-03bf-4e3e-99b6-6f523c34b96b",
-      "ancestors": ["5c1dab6b-af33-447e-84af-23830228083c", "9e8ab162-03bf-4e3e-99b6-6f523c34b96b"]
+      "idx": "001.002.001"
     }
   ];
 
