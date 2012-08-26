@@ -220,7 +220,6 @@ if Meteor.is_client
     moveItem = (data) ->
       itemsToMoveIndex items.indexOf(data)
       data.isMoving true
-      pos = items.indexOf(data)
       descendents = data.getDescendents()
       countOfItems = descendents.length + 1 # count of descendents and include self
       itm.isMoving(true) for itm in descendents

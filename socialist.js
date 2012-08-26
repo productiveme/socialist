@@ -295,10 +295,9 @@
         return false;
       };
       moveItem = function(data) {
-        var countOfItems, descendents, itm, pos, _i, _len;
+        var countOfItems, descendents, itm, _i, _len;
         itemsToMoveIndex(items.indexOf(data));
         data.isMoving(true);
-        pos = items.indexOf(data);
         descendents = data.getDescendents();
         countOfItems = descendents.length + 1;
         for (_i = 0, _len = descendents.length; _i < _len; _i++) {
