@@ -138,7 +138,7 @@ if Meteor.is_client
       return
 
     createNewItem = ->
-      lastIdx = items()[items().length]?.idx() or "000"
+      lastIdx = items()[items().length-1]?.idx() or "000"
       newid = Items.insert 
         item: ''
         archived: false
@@ -303,15 +303,6 @@ if Meteor.is_client
     ko.applyBindings vm
 
 if Meteor.is_server
-  
-  Meteor.methods
-    indent: (idx, prevIdx) ->
-      startsWithIdx = new RegExp("^#{idx.replace('.','\\.')}.*", "i")
-      itemWithChildren = Items.find idx: startsWithIdx
-      for itm in itemWithChildren
-        Items.update itm._id,
-          { $set: idx: itm.idx.replace startsWithIdx, prevIdx + '.001' }
-          { multi: true }
 
   Meteor.startup -> 
     reset_data() if Items.find().count() is 0

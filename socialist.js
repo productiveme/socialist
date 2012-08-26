@@ -189,7 +189,7 @@
       };
       createNewItem = function() {
         var lastIdx, newid, _ref;
-        lastIdx = ((_ref = items()[items().length]) != null ? _ref.idx() : void 0) || "000";
+        lastIdx = ((_ref = items()[items().length - 1]) != null ? _ref.idx() : void 0) || "000";
         newid = Items.insert({
           item: '',
           archived: false,
@@ -411,27 +411,6 @@
   }
 
   if (Meteor.is_server) {
-    Meteor.methods({
-      indent: function(idx, prevIdx) {
-        var itemWithChildren, itm, startsWithIdx, _i, _len, _results;
-        startsWithIdx = new RegExp("^" + (idx.replace('.', '\\.')) + ".*", "i");
-        itemWithChildren = Items.find({
-          idx: startsWithIdx
-        });
-        _results = [];
-        for (_i = 0, _len = itemWithChildren.length; _i < _len; _i++) {
-          itm = itemWithChildren[_i];
-          _results.push(Items.update(itm._id, {
-            $set: {
-              idx: itm.idx.replace(startsWithIdx, prevIdx + '.001')
-            }
-          }, {
-            multi: true
-          }));
-        }
-        return _results;
-      }
-    });
     Meteor.startup(function() {
       if (Items.find().count() === 0) {
         return reset_data();
