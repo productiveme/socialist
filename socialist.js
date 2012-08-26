@@ -24,13 +24,21 @@
 
   if (Meteor.is_client) {
     itemMapping = {
+      idx: {
+        create: function(options) {
+          var itemObject, observable;
+          itemObject = options.parent;
+          observable = ko.observable(options.data);
+          itemObject.indent = ko.observable(options.data.split('.').length);
+          return observable;
+        }
+      },
       item: {
         create: function(options) {
           var itemObject, observable;
           itemObject = options.parent;
           observable = ko.observable(options.data);
           itemObject.isMoving = ko.observable(false);
-          itemObject.indent = ko.observable(typeof this.idx === "function" ? this.idx().split('.').length : void 0);
           itemObject.canMoveHere = ko.computed(function() {
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
@@ -55,15 +63,17 @@
             vm.vm().saveAll();
           };
           itemObject.getDescendents = function() {
-            var itemsAfter, itm, _i, _len;
+            var d, itemsAfter, itm, _i, _len;
             itemsAfter = vm.vm().items().slice(vm.vm().items.indexOf(itemObject) + 1);
+            d = [];
             for (_i = 0, _len = itemsAfter.length; _i < _len; _i++) {
               itm = itemsAfter[_i];
               if (itm.indent() <= itemObject.indent()) {
                 break;
               }
-              return itm;
+              d.push(itm);
             }
+            return d;
           };
           itemObject.save = function() {
             return Items.update(itemObject._id(), {
@@ -144,21 +154,22 @@
         return items()[items.indexOf(model) - 1];
       };
       saveAll = function() {
-        var ancestorFound, ancestorItem, curIdx, i, itm, _i, _j, _len, _len1, _ref;
+        var ancestorFound, ancestorItem, curIdx, i, itm, prevItm, _i, _j, _len, _len1, _ref, _ref1;
         curIdx = "001";
-        for (i = _i = 0, _len = items.length; _i < _len; i = ++_i) {
-          itm = items[i];
-          if (itm.indent() > (prevItem != null ? prevItem.indent() : void 0)) {
+        _ref = items();
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          itm = _ref[i];
+          if (itm.indent() > (typeof prevItm !== "undefined" && prevItm !== null ? prevItm.indent() : void 0)) {
             curIdx = curIdx + ".001";
           }
-          if (itm.indent() === (prevItem != null ? prevItem.indent() : void 0)) {
+          if (itm.indent() === (typeof prevItm !== "undefined" && prevItm !== null ? prevItm.indent() : void 0)) {
             curIdx = nextSiblingnIdx(curIdx);
           }
-          if (itm.indent() < (prevItem != null ? prevItem.indent() : void 0)) {
+          if (itm.indent() < (typeof prevItm !== "undefined" && prevItm !== null ? prevItm.indent() : void 0)) {
             ancestorFound = false;
-            _ref = items().slice(0, (i - 1) + 1 || 9e9).reverse();
-            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-              ancestorItem = _ref[_j];
+            _ref1 = items().slice(0, (i - 1) + 1 || 9e9).reverse();
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              ancestorItem = _ref1[_j];
               if (ancestorItem.indent() === itm.indent()) {
                 curIdx = nextSiblingnIdx(ancestorItem.idx());
                 ancestorFound = true;
@@ -173,7 +184,7 @@
               idx: curIdx
             }
           });
-          prevItem = itm;
+          prevItm = itm;
         }
       };
       createNewItem = function() {
@@ -284,65 +295,35 @@
         return false;
       };
       moveItem = function(data) {
-        var countOfItems, itm, pos, _i, _len, _ref;
+        var countOfItems, descendents, itm, pos, _i, _len;
         itemsToMoveIndex(items.indexOf(data));
         data.isMoving(true);
         pos = items.indexOf(data);
-        countOfItems = 1;
-        _ref = items.slice(pos + 1);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          itm = _ref[_i];
-          if (itm.indent() <= data.indent()) {
-            break;
-          }
-          countOfItems++;
+        descendents = data.getDescendents();
+        countOfItems = descendents.length + 1;
+        for (_i = 0, _len = descendents.length; _i < _len; _i++) {
+          itm = descendents[_i];
           itm.isMoving(true);
         }
         isMoving(true);
         return itemsToMoveCount(countOfItems);
       };
       moveHere = function(data) {
-        var cutItems, i, id, itm, pastePos, rootItemOldIndent, rootItemToMove, tail, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+        var cutItems, itm, pastePos, tail, _i, _j, _len, _len1;
         cutItems = items.splice(itemsToMoveIndex(), itemsToMoveCount());
-        rootItemToMove = cutItems[0];
-        rootItemOldIndent = rootItemToMove.indent();
-        rootItemToMove.ancestors(data.ancestors().slice(0));
-        rootItemToMove.ancestors.push(data._id());
-        rootItemToMove.parent(data.parent());
-        _ref = cutItems.slice(1);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          itm = _ref[_i];
-          itm.ancestors.splice(0, rootItemOldIndent);
-          _ref1 = rootItemToMove.ancestors.slice(0).reverse();
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            id = _ref1[_j];
-            itm.ancestors.unshift(id);
-          }
-        }
         pastePos = items.indexOf(data) + 1;
         tail = items.splice(pastePos, 9e9);
-        for (_k = 0, _len2 = cutItems.length; _k < _len2; _k++) {
-          itm = cutItems[_k];
+        for (_i = 0, _len = cutItems.length; _i < _len; _i++) {
+          itm = cutItems[_i];
           items.push(itm);
+          itm.isMoving(false);
         }
-        for (_l = 0, _len3 = tail.length; _l < _len3; _l++) {
-          itm = tail[_l];
+        for (_j = 0, _len1 = tail.length; _j < _len1; _j++) {
+          itm = tail[_j];
           items.push(itm);
         }
         isMoving(false);
-        _ref2 = items();
-        for (i = _m = 0, _len4 = _ref2.length; _m < _len4; i = ++_m) {
-          itm = _ref2[i];
-          Items.update(itm._id(), {
-            $set: {
-              sortOrder: i,
-              parent: itm.parent(),
-              ancestors: itm.ancestors()
-            }
-          });
-          itm.isMoving(false);
-          prevItem = itm;
-        }
+        saveAll();
       };
       rotateActionSets = function() {
         return actionSets.push(actionSets.shift());
@@ -359,7 +340,8 @@
         isMoving: isMoving,
         moveHere: moveHere,
         actionSetTemplate: actionSetTemplate,
-        rotateActionSets: rotateActionSets
+        rotateActionSets: rotateActionSets,
+        saveAll: saveAll
       };
     };
     viewModel = function() {

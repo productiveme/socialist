@@ -17,7 +17,13 @@ reset_data = -> # Executes on both client and server.
 
 if Meteor.is_client
 
-  itemMapping = 
+  itemMapping =
+    idx:
+      create: (options) ->
+        itemObject = options.parent # get the item object
+        observable = ko.observable(options.data) # make observable from item string
+        itemObject.indent = ko.observable(options.data.split('.').length)
+        return observable
     item:
       # item observable is created, actually the text entered for an item object
       create: (options) ->
@@ -25,8 +31,7 @@ if Meteor.is_client
         observable = ko.observable(options.data) # make observable from item string
 
         itemObject.isMoving = ko.observable(false)
-        itemObject.indent = ko.observable(@idx?().split('.').length)
-
+        
         itemObject.canMoveHere = ko.computed ->
           return vm.vm().isMoving() and not @isMoving()
         , itemObject
@@ -47,9 +52,11 @@ if Meteor.is_client
 
         itemObject.getDescendents = ->
           itemsAfter = vm.vm().items()[vm.vm().items.indexOf(itemObject) + 1..]
+          d = []
           for itm in itemsAfter
             break if itm.indent() <= itemObject.indent()
-            return itm
+            d.push itm
+          return d
 
         itemObject.save = -> 
           Items.update itemObject._id(),
@@ -107,13 +114,13 @@ if Meteor.is_client
 
     saveAll = ->
       curIdx = "001"
-      for itm,i in items
+      for itm,i in items()
         # first child if indent greater than previous
-        curIdx = curIdx + ".001" if itm.indent() > prevItem?.indent()
+        curIdx = curIdx + ".001" if itm.indent() > prevItm?.indent()
         # next sibling if indent the same as previous
-        curIdx = nextSiblingnIdx(curIdx) if itm.indent() is prevItem?.indent()
+        curIdx = nextSiblingnIdx(curIdx) if itm.indent() is prevItm?.indent()
         # ancestor's next sibling if indent smaller than previous
-        if itm.indent() < prevItem?.indent()
+        if itm.indent() < prevItm?.indent()
           # find an ancestor with that indent and make next sibling
           ancestorFound = false
           for ancestorItem in items()[..i-1].reverse()
@@ -127,7 +134,7 @@ if Meteor.is_client
             item: itm.item()
             archived: itm.archived()
             idx: curIdx
-        prevItem = itm
+        prevItm = itm
       return
 
     createNewItem = ->
@@ -214,46 +221,25 @@ if Meteor.is_client
       itemsToMoveIndex items.indexOf(data)
       data.isMoving true
       pos = items.indexOf(data)
-      countOfItems = 1
-      for itm in items[pos+1..]
-        break if itm.indent() <= data.indent()
-        countOfItems++ #itemsToMove.push itm
-        itm.isMoving true
+      descendents = data.getDescendents()
+      countOfItems = descendents.length + 1 # count of descendents and include self
+      itm.isMoving(true) for itm in descendents
       isMoving true
-      itemsToMoveCount countOfItems
+      itemsToMoveCount(countOfItems)
 
     moveHere = (data) ->
       # splice from observableArray and insert in new pos
       cutItems = items.splice itemsToMoveIndex(), itemsToMoveCount()
       
-      # root item to move should become sibling of selected item
-      rootItemToMove = cutItems[0]
-      rootItemOldIndent = rootItemToMove.indent()
-      
-      rootItemToMove.ancestors data.ancestors()[..] # copy target's ancestors
-      rootItemToMove.ancestors.push data._id()      # and add target as the final ancestor
-      rootItemToMove.parent data.parent()           # and parent
-
-      # root item's children should get new ancestry
-      for itm in cutItems[1..]
-        itm.ancestors.splice 0, rootItemOldIndent                                   # throw away old ancestry
-        itm.ancestors.unshift(id) for id in rootItemToMove.ancestors[..].reverse()  # and prepend parent's new ancestory
-
       pastePos = items.indexOf(data) + 1
       tail = items.splice(pastePos, 9e9)
-      items.push itm for itm in cutItems
+      for itm in cutItems
+        items.push itm 
+        itm.isMoving(false)
       items.push itm for itm in tail
       isMoving false
 
-      # Save each item in list with new sortOrder based on pos in observableArray
-      for itm,i in items()
-        Items.update itm._id(),
-          $set: 
-            sortOrder: i
-            parent: itm.parent()
-            ancestors: itm.ancestors()
-        itm.isMoving false
-        prevItem = itm
+      saveAll()
 
       return
 
@@ -273,6 +259,7 @@ if Meteor.is_client
       moveHere: moveHere
       actionSetTemplate: actionSetTemplate
       rotateActionSets: rotateActionSets
+      saveAll: saveAll
     }
 
   viewModel = ->
