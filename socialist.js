@@ -188,8 +188,8 @@
         }
       };
       createNewItem = function() {
-        var lastIdx, newid;
-        lastIdx = items()[items().length].idx();
+        var lastIdx, newid, _ref;
+        lastIdx = ((_ref = items()[items().length]) != null ? _ref.idx() : void 0) || "000";
         newid = Items.insert({
           item: '',
           archived: false,
@@ -224,7 +224,7 @@
           return;
         }
         model.save();
-        if (!model.parent()) {
+        if (model.indent() === 0) {
           focusid = model._id();
           if (model.archived()) {
             focusid = (_ref = items()[items.indexOf(model) - 1]) != null ? _ref._id() : void 0;
@@ -315,8 +315,8 @@
         tail = items.splice(pastePos, 9e9);
         for (_i = 0, _len = cutItems.length; _i < _len; _i++) {
           itm = cutItems[_i];
-          items.push(itm);
           itm.isMoving(false);
+          items.push(itm);
         }
         for (_j = 0, _len1 = tail.length; _j < _len1; _j++) {
           itm = tail[_j];

@@ -138,7 +138,7 @@ if Meteor.is_client
       return
 
     createNewItem = ->
-      lastIdx = items()[items().length].idx()
+      lastIdx = items()[items().length]?.idx() or "000"
       newid = Items.insert 
         item: ''
         archived: false
@@ -162,7 +162,7 @@ if Meteor.is_client
       return unless event.which is 8
       return unless model.item() is ''
       model.save()
-      if !model.parent()
+      if model.indent() is 0
         focusid = model._id()
         focusid = items()[items.indexOf(model)-1]?._id() if model.archived()
         model.remove()
@@ -234,13 +234,12 @@ if Meteor.is_client
       pastePos = items.indexOf(data) + 1
       tail = items.splice(pastePos, 9e9)
       for itm in cutItems
-        items.push itm 
         itm.isMoving(false)
+        items.push itm 
       items.push itm for itm in tail
       isMoving false
 
       saveAll()
-
       return
 
     rotateActionSets = ->
