@@ -22,7 +22,7 @@ if Meteor.is_client
       create: (options) ->
         itemObject = options.parent # get the item object
         observable = ko.observable(options.data) # make observable from item string
-        itemObject.indent = ko.observable(options.data.split('.').length)
+        itemObject.indent = ko.observable(options.data.split('.').length - 1)
         return observable
     item:
       # item observable is created, actually the text entered for an item object
@@ -37,17 +37,21 @@ if Meteor.is_client
         , itemObject
 
         itemObject.doIndent = ->
-          descendents = itemObject.getDescendents()
-          itemObject.indent(itemObject.indent() + 1)
-          itm.indent(itm.indent() + 1) for itm in descendents
-          vm.vm().saveAll()
+          items = vm.vm().items
+          prevItem = items()[items.indexOf(itemObject)-1]
+          if prevItem and itemObject.indent() <= prevItem.indent()
+            descendents = itemObject.getDescendents()
+            itemObject.indent(itemObject.indent() + 1)
+            itm.indent(itm.indent() + 1) for itm in descendents
+            vm.vm().saveAll()
           return
 
         itemObject.doOutdent = -> 
-          descendents = itemObject.getDescendents()
-          itemObject.indent(itemObject.indent() - 1)
-          itm.indent(itm.indent() - 1) for itm in descendents
-          vm.vm().saveAll()
+          if itemObject.indent() > 0
+            descendents = itemObject.getDescendents()
+            itemObject.indent(itemObject.indent() - 1)
+            itm.indent(itm.indent() - 1) for itm in descendents
+            vm.vm().saveAll()
           return
 
         itemObject.getDescendents = ->
@@ -108,9 +112,6 @@ if Meteor.is_client
     itemsToMoveCount = ko.observable()
 
     actionSets = ko.observableArray ['archiveRemove', 'indentOutdent']
-
-    prevItem = (model) ->
-      return items()[items.indexOf(model)-1]
 
     saveAll = ->
       curIdx = "001"

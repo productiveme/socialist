@@ -29,7 +29,7 @@
           var itemObject, observable;
           itemObject = options.parent;
           observable = ko.observable(options.data);
-          itemObject.indent = ko.observable(options.data.split('.').length);
+          itemObject.indent = ko.observable(options.data.split('.').length - 1);
           return observable;
         }
       },
@@ -43,24 +43,30 @@
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
           itemObject.doIndent = function() {
-            var descendents, itm, _i, _len;
-            descendents = itemObject.getDescendents();
-            itemObject.indent(itemObject.indent() + 1);
-            for (_i = 0, _len = descendents.length; _i < _len; _i++) {
-              itm = descendents[_i];
-              itm.indent(itm.indent() + 1);
+            var descendents, items, itm, prevItem, _i, _len;
+            items = vm.vm().items;
+            prevItem = items()[items.indexOf(itemObject) - 1];
+            if (prevItem && itemObject.indent() <= prevItem.indent()) {
+              descendents = itemObject.getDescendents();
+              itemObject.indent(itemObject.indent() + 1);
+              for (_i = 0, _len = descendents.length; _i < _len; _i++) {
+                itm = descendents[_i];
+                itm.indent(itm.indent() + 1);
+              }
+              vm.vm().saveAll();
             }
-            vm.vm().saveAll();
           };
           itemObject.doOutdent = function() {
             var descendents, itm, _i, _len;
-            descendents = itemObject.getDescendents();
-            itemObject.indent(itemObject.indent() - 1);
-            for (_i = 0, _len = descendents.length; _i < _len; _i++) {
-              itm = descendents[_i];
-              itm.indent(itm.indent() - 1);
+            if (itemObject.indent() > 0) {
+              descendents = itemObject.getDescendents();
+              itemObject.indent(itemObject.indent() - 1);
+              for (_i = 0, _len = descendents.length; _i < _len; _i++) {
+                itm = descendents[_i];
+                itm.indent(itm.indent() - 1);
+              }
+              vm.vm().saveAll();
             }
-            vm.vm().saveAll();
           };
           itemObject.getDescendents = function() {
             var d, itemsAfter, itm, _i, _len;
@@ -137,7 +143,7 @@
       };
     };
     listModel = function(parent) {
-      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, prevItem, rotateActionSets, saveAll, saveOnEnter, _this;
+      var actionSetTemplate, actionSets, checkKeydownBindings, createNewItem, focusNextOnDown, focusPreviousOnUp, indentOn3Spaces, isMoving, items, itemsToMoveCount, itemsToMoveIndex, moveHere, moveItem, outdentOnBackspaceAndEmpty, rotateActionSets, saveAll, saveOnEnter, _this;
       _this = this;
       items = ko.meteor.find(Items, {
         list: parent.listName()
@@ -150,9 +156,6 @@
       itemsToMoveIndex = ko.observable();
       itemsToMoveCount = ko.observable();
       actionSets = ko.observableArray(['archiveRemove', 'indentOutdent']);
-      prevItem = function(model) {
-        return items()[items.indexOf(model) - 1];
-      };
       saveAll = function() {
         var ancestorFound, ancestorItem, curIdx, i, itm, prevItm, _i, _j, _len, _len1, _ref, _ref1;
         curIdx = "001";
