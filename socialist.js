@@ -39,6 +39,8 @@
           itemObject = options.parent;
           observable = ko.observable(options.data);
           itemObject.isMoving = ko.observable(false);
+          itemObject.collapsed = ko.observable(false);
+          itemObject.hidden = ko.observable(false);
           itemObject.canMoveHere = ko.computed(function() {
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
@@ -118,6 +120,28 @@
               return vm.vm().saveAll();
             }
           };
+          itemObject.collapse = function() {
+            var itm, _i, _len, _ref, _results;
+            itemObject.collapsed(true);
+            _ref = itemObject.getDescendents();
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              itm = _ref[_i];
+              _results.push(itm.hidden(true));
+            }
+            return _results;
+          };
+          itemObject.expand = function() {
+            var itm, _i, _len, _ref, _results;
+            itemObject.collapsed(false);
+            _ref = itemObject.getDescendents();
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              itm = _ref[_i];
+              _results.push(itm.hidden(false));
+            }
+            return _results;
+          };
           return observable;
         }
       }
@@ -155,7 +179,7 @@
       isMoving = ko.observable(false);
       itemsToMoveIndex = ko.observable();
       itemsToMoveCount = ko.observable();
-      actionSets = ko.observableArray(['archiveRemove', 'indentOutdent']);
+      actionSets = ko.observableArray(['archiveRemove', 'indentOutdent', 'expandCollapse']);
       saveAll = function() {
         var ancestorFound, ancestorItem, curIdx, i, itm, prevItm, _i, _j, _len, _len1, _ref, _ref1;
         curIdx = "001";

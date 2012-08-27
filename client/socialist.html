@@ -85,8 +85,9 @@
         <tr><th class="bullet"></th><th>Item</th><th class="icons" style="text-align:center"><button class="btn" data-bind="click: $root.vm().rotateActionSets"><i class="icon-refresh"></i></button></th></tr>
       </thead>
       <tbody data-bind="foreach: items">
-        <tr data-bind="template: 'itemEditing', css: { 'archived' : archived }"> 
+        <tr data-bind="template: 'itemEditing', css: { 'archived' : archived }, visible: !hidden()"> 
         </tr>
+        <tr data-bind="visible: collapsed" class="collapsed"><td colspan=3>...</td></tr>
       </tbody>
       <tfoot>
         <tr>
@@ -121,6 +122,9 @@
 </script>
 <script type="text/html" id="indentOutdentTemplate">
   <button class="btn" data-bind="click: doOutdent"><i class="icon-indent-right"></i></button><button class="btn" data-bind="click: doIndent"><i class="icon-indent-left"></i></button>
+</script>
+<script type="text/html" id="expandCollapseTemplate">
+  <button class="btn" data-bind="click: collapse, visible: !collapsed()"><i class="icon-chevron-up"></i></button><button class="btn" data-bind="click: expand, visible: collapsed"><i class="icon-chevron-down"></i></button>
 </script>
 </body>
 
