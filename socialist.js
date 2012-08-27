@@ -44,6 +44,9 @@
           itemObject.canMoveHere = ko.computed(function() {
             return vm.vm().isMoving() && !this.isMoving();
           }, itemObject);
+          itemObject.indicateCollapsed = ko.computed(function() {
+            return itemObject.collapsed() && !itemObject.hidden();
+          });
           itemObject.doIndent = function() {
             var descendents, items, itm, prevItem, _i, _len;
             items = vm.vm().items;

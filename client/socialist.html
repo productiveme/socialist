@@ -87,7 +87,7 @@
       <tbody data-bind="foreach: items">
         <tr data-bind="template: 'itemEditing', css: { 'archived' : archived }, visible: !hidden()"> 
         </tr>
-        <tr data-bind="visible: collapsed" class="collapsed"><td colspan=3>...</td></tr>
+        <tr data-bind="visible: indicateCollapsed " class="collapsed"><td colspan=3>...</td></tr>
       </tbody>
       <tfoot>
         <tr>

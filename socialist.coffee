@@ -38,6 +38,9 @@ if Meteor.is_client
           return vm.vm().isMoving() and not @isMoving()
         , itemObject
 
+        itemObject.indicateCollapsed = ko.computed ->
+          return itemObject.collapsed() and not itemObject.hidden()
+
         itemObject.doIndent = ->
           items = vm.vm().items
           prevItem = items()[items.indexOf(itemObject)-1]
