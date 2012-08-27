@@ -141,7 +141,8 @@
             _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               itm = _ref[_i];
-              _results.push(itm.hidden(false));
+              itm.hidden(false);
+              _results.push(itm.collapsed(false));
             }
             return _results;
           };
@@ -341,6 +342,9 @@
         var cutItems, itm, pastePos, tail, _i, _j, _len, _len1;
         cutItems = items.splice(itemsToMoveIndex(), itemsToMoveCount());
         pastePos = items.indexOf(data) + 1;
+        if (data.collapsed()) {
+          pastePos += data.getDescendents().length;
+        }
         tail = items.splice(pastePos, 9e9);
         for (_i = 0, _len = cutItems.length; _i < _len; _i++) {
           itm = cutItems[_i];

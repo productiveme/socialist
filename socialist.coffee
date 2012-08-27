@@ -94,7 +94,9 @@ if Meteor.is_client
 
         itemObject.expand = ->
           itemObject.collapsed(false)
-          itm.hidden(false) for itm in itemObject.getDescendents()
+          for itm in itemObject.getDescendents()
+            itm.hidden(false) 
+            itm.collapsed(false)
 
         return observable
 
@@ -245,6 +247,7 @@ if Meteor.is_client
       cutItems = items.splice itemsToMoveIndex(), itemsToMoveCount()
       
       pastePos = items.indexOf(data) + 1
+      pastePos += data.getDescendents().length if data.collapsed()
       tail = items.splice(pastePos, 9e9)
       for itm in cutItems
         itm.isMoving(false)
