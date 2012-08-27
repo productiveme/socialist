@@ -31,6 +31,8 @@ if Meteor.is_client
         observable = ko.observable(options.data) # make observable from item string
 
         itemObject.isMoving = ko.observable(false)
+        itemObject.collapsed = ko.observable(false)
+        itemObject.hidden = ko.observable(false)
         
         itemObject.canMoveHere = ko.computed ->
           return vm.vm().isMoving() and not @isMoving()
@@ -83,6 +85,14 @@ if Meteor.is_client
             itm.archived(true) for itm in descendents
             vm.vm().saveAll()
 
+        itemObject.collapse = ->
+          itemObject.collapsed(true)
+          itm.hidden(true) for itm in itemObject.getDescendents()
+
+        itemObject.expand = ->
+          itemObject.collapsed(false)
+          itm.hidden(false) for itm in itemObject.getDescendents()
+
         return observable
 
   # The form to create a new list
@@ -111,7 +121,7 @@ if Meteor.is_client
     itemsToMoveIndex = ko.observable()
     itemsToMoveCount = ko.observable()
 
-    actionSets = ko.observableArray ['archiveRemove', 'indentOutdent']
+    actionSets = ko.observableArray ['archiveRemove', 'indentOutdent', 'expandCollapse']
 
     saveAll = ->
       curIdx = "001"
