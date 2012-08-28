@@ -3,35 +3,77 @@
 
   (typeof exports !== "undefined" && exports !== null ? exports : this).samples = [
     {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Shopping",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001"
+      "indent": 0,
+      "idx": "001",
+      "_id": "4cfa46f4-19ca-4941-809e-ed77081391d2"
     }, {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Groceries",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001.001"
+      "indent": 1,
+      "idx": "001.001",
+      "_id": "82d706d7-2ca2-439b-8ccc-b4208f4e1abf"
     }, {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Milk",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001.001.001"
+      "indent": 2,
+      "idx": "001.001.001",
+      "_id": "857d3e51-52fa-415f-abb3-459f9ee100c0"
     }, {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Bread",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001.001.002"
+      "indent": 2,
+      "idx": "001.001.002",
+      "_id": "ad940a59-462b-4a2d-8693-a1bc429c3669"
     }, {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Household",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001.002"
+      "indent": 1,
+      "idx": "001.002",
+      "_id": "2c853a15-6a93-4df4-8cf1-7420f337abcd"
     }, {
+      "isMoving": false,
+      "collapsed": false,
+      "hidden": false,
+      "canMoveHere": false,
+      "indicateCollapsed": false,
       "item": "Soap",
       "archived": false,
       "list": "Shopping-List",
-      "idx": "001.002.001"
+      "indent": 2,
+      "idx": "001.002.001",
+      "_id": "88efda64-03c2-4072-8777-9bf4964c1c9a"
     }
   ];
 

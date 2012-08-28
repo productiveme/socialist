@@ -309,7 +309,7 @@ if Meteor.is_client
     name.replace(/[^-A-z0-9\s]*/g,'').replace(/\s+/g, '-')
 
   nextSiblingnIdx = (idx) ->
-    idx.replace /\d{3}$/, ("000" + (parseInt(idx.match(/\d{3}$/))+1)).slice(-3)
+    idx.replace /\d{3}$/, ("000" + (parseInt(idx.match(/\d{3}$/), 10)+1)).slice(-3)
 
   Session.set 'listName', window.location.hash.replace('#!', '') or ''
 

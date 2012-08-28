@@ -434,7 +434,7 @@
       return name.replace(/[^-A-z0-9\s]*/g, '').replace(/\s+/g, '-');
     };
     nextSiblingnIdx = function(idx) {
-      return idx.replace(/\d{3}$/, ("000" + (parseInt(idx.match(/\d{3}$/)) + 1)).slice(-3));
+      return idx.replace(/\d{3}$/, ("000" + (parseInt(idx.match(/\d{3}$/), 10) + 1)).slice(-3));
     };
     Session.set('listName', window.location.hash.replace('#!', '') || '');
     vm = new viewModel();
